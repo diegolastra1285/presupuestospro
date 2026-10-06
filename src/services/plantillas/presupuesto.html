@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Plantilla de Presupuesto - PresupuestosPro</title>
+  <style>
+    /* ==========================================================================
+       PresupuestosPro - Plantilla HTML de Referencia para Documento PDF
+       Fuente: specs/002-redisenio-visual-inicio/contracts/contrato-plantilla-pdf.md
+       ========================================================================== */
+    @page {
+      size: A4 portrait;
+      margin: 15mm 20mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      font-size: 10pt;
+      line-height: 1.5;
+      color: #0f172a;
+      background-color: #ffffff;
+    }
+
+    .documento-contenedor {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+    }
+
+    /* Encabezado */
+    .header-pdf {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 16px;
+      margin-bottom: 8px;
+    }
+
+    .emisor-bloque-principal h2 {
+      font-size: 14pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .emisor-bloque-principal p {
+      font-size: 9pt;
+      color: #475569;
+    }
+
+    .meta-bloque-principal {
+      text-align: right;
+    }
+
+    .titulo-presupuesto {
+      font-size: 18pt;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #1e3a8a; /* Azul marino sobrio */
+      margin-bottom: 4px;
+    }
+
+    .codigo-presupuesto {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .meta-fecha {
+      font-size: 9pt;
+      color: #475569;
+    }
+
+    .aviso-no-factura {
+      text-align: center;
+      font-size: 8pt;
+      font-style: italic;
+      color: #64748b;
+      padding: 4px 0 12px;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 16px;
+    }
+
+    /* Datos de las Partes */
+    .partes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    .parte-col h4 {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    .parte-nombre {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    .parte-info {
+      font-size: 9pt;
+      color: #334155;
+      line-height: 1.4;
+    }
+
+    /* Tabla de Líneas */
+    .tabla-lineas {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .tabla-lineas th {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      font-size: 8.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 8px 10px;
+      border-bottom: 1.5px solid #cbd5e1;
+      text-align: left;
+    }
+
+    .tabla-lineas th.col-derecha,
+    .tabla-lineas td.col-derecha {
+      text-align: right;
+    }
+
+    .tabla-lineas td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 9.5pt;
+      vertical-align: top;
+    }
+
+    /* Caja de Totales */
+    .totales-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 24px;
+    }
+
+    .totales-caja {
+      width: 280px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 12px 14px;
+      background-color: #f8fafc;
+    }
+
+    .totales-fila {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9pt;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+
+    .totales-fila .valor {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .totales-fila.irpf .valor {
+      color: #b91c1c;
+    }
+
+    .totales-fila.total-destacado {
+      border-top: 1.5px solid #1e3a8a;
+      padding-top: 8px;
+      margin-top: 8px;
+      margin-bottom: 0;
+      font-size: 11pt;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .totales-fila.total-destacado .valor {
+      font-size: 13pt;
+      color: #1e3a8a;
+    }
+
+    /* Condiciones y notas */
+    .condiciones-bloque {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 12px;
+      margin-top: 16px;
+    }
+
+    .condiciones-titulo {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .condiciones-texto {
+      font-size: 8.5pt;
+      color: #475569;
+      white-space: pre-line;
+    }
+
+    /* Pie de página */
+    .footer-pdf {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 8pt;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="documento-contenedor">
+    <!-- Encabezado -->
+    <header class="header-pdf">
+      <div class="emisor-bloque-principal">
+        <h2>{{EMISOR_NOMBRE}}</h2>
+        <p>NIF/CIF: {{EMISOR_NIF}}</p>
+        <p>{{EMISOR_DIRECCION}}</p>
+        <p>{{EMISOR_EMAIL}} · {{EMISOR_TELEFONO}}</p>
+      </div>
+      <div class="meta-bloque-principal">
+        <h1 class="titulo-presupuesto">PRESUPUESTO</h1>
+        <div class="codigo-presupuesto">{{PRESUPUESTO_NUMERO}}</div>
+        <p class="meta-fecha">Fecha: {{FECHA_EMISION}}</p>
+        <p class="meta-fecha">Válido hasta: {{FECHA_VALIDEZ}}</p>
+      </div>
+    </header>
+
+    <div class="aviso-no-factura">
+      Este documento no es una factura
+    </div>
+
+    <!-- Partes -->
+    <section class="partes-grid">
+      <div class="parte-col">
+        <h4>De (Emisor)</h4>
+        <div class="parte-nombre">{{EMISOR_NOMBRE}}</div>
+        <div class="parte-info">NIF/CIF: {{EMISOR_NIF}}</div>
+        <div class="parte-info">{{EMISOR_DIRECCION}}</div>
+        <div class="parte-info">{{EMISOR_EMAIL}}</div>
+      </div>
+      <div class="parte-col">
+        <h4>Para (Cliente)</h4>
+        <div class="parte-nombre">{{CLIENTE_NOMBRE}}</div>
+        <div class="parte-info">NIF/CIF: {{CLIENTE_NIF}}</div>
+        <div class="parte-info">{{CLIENTE_DIRECCION}}</div>
+        <div class="parte-info">{{CLIENTE_EMAIL}}</div>
+      </div>
+    </section>
+
+    <!-- Tabla de Líneas -->
+    <table class="tabla-lineas">
+      <thead>
+        <tr>
+          <th style="width: 55%;">Descripción</th>
+          <th class="col-derecha" style="width: 15%;">Cantidad</th>
+          <th class="col-derecha" style="width: 15%;">Precio</th>
+          <th class="col-derecha" style="width: 15%;">Importe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Repetición de líneas -->
+        <tr>
+          <td>{{LINEA_DESCRIPCION}}</td>
+          <td class="col-derecha">{{LINEA_CANTIDAD}}</td>
+          <td class="col-derecha">{{LINEA_PRECIO}}</td>
+          <td class="col-derecha"><strong>{{LINEA_SUBTOTAL}}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Bloque de Totales -->
+    <div class="totales-wrapper">
+      <div class="totales-caja">
+        <div class="totales-fila">
+          <span>Base Imponible:</span>
+          <span class="valor">{{BASE_IMPONIBLE}}</span>
+        </div>
+        <div class="totales-fila">
+          <span>IVA (21 %):</span>
+          <span class="valor">{{IVA_IMPORTE}}</span>
+        </div>
+        <div class="totales-fila irpf">
+          <span>Retención IRPF ({{IRPF_PCT}} %):</span>
+          <span class="valor">{{IRPF_IMPORTE}}</span>
+        </div>
+        <div class="totales-fila total-destacado">
+          <span>TOTAL:</span>
+          <span class="valor">{{TOTAL_PRESUPUESTO}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Condiciones y Forma de Pago -->
+    <footer class="condiciones-bloque">
+      <div class="condiciones-titulo">Condiciones y Notas</div>
+      <div class="condiciones-texto">{{CONDICIONES_TEXTO}}</div>
+      <div class="condiciones-texto" style="margin-top: 6px;"><strong>Forma de pago:</strong> {{DATOS_PAGO}}</div>
+      <div class="footer-pdf">Página 1 de 1</div>
+    </footer>
+  </div>
+</body>
+</html>
