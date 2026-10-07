@@ -3,6 +3,12 @@ import { useState, useMemo } from 'preact/hooks';
 import { formatearMoneda } from '../../utils/moneda.js';
 import { formatearFecha, obtenerNombreMes } from '../../utils/fechas.js';
 import { calcularTotalesPresupuesto } from '../../domain/calculos.js';
+import { 
+  exportarTodoZip, 
+  dispararDescargaArchivo, 
+  obtenerPresupuestosExportables 
+} from '../../services/exportacion-zip.js';
+import { Alerta } from '../comun/Alerta.jsx';
 
 export function obtenerEstadoPresupuesto(p) {
   const estado = String(p.estado || '').toLowerCase();
@@ -33,6 +39,59 @@ export function obtenerEstadoPresupuesto(p) {
 
 export function ListadoPresupuestos({ estado, dispatch, navegar }) {
   const presupuestos = estado.presupuestos || [];
+
+  // Estado de exportación ZIP (US1, US2, US3)
+  const [estadoExportacion, setEstadoExportacion] = useState('inactivo'); // 'inactivo' | 'generando' | 'comprimiendo'
+  const [progresoExportacion, setProgresoExportacion] = useState({ completados: 0, total: 0 });
+  const [alertaExportacion, setAlertaExportacion] = useState(null); // null | { tipo, mensaje }
+
+  // Presupuestos oficiales exportables
+  const presupuestosExportables = useMemo(() => {
+    return obtenerPresupuestosExportables(presupuestos);
+  }, [presupuestos]);
+
+  const sinPresupuestosExportables = presupuestosExportables.length === 0;
+
+  const handleExportarTodoZip = async () => {
+    if (sinPresupuestosExportables || estadoExportacion !== 'inactivo') return;
+
+    setAlertaExportacion(null);
+    setEstadoExportacion('generando');
+    setProgresoExportacion({ completados: 0, total: presupuestosExportables.length });
+
+    try {
+      const resultado = await exportarTodoZip(estado, ({ fase, completados, total }) => {
+        setEstadoExportacion(fase);
+        setProgresoExportacion({ completados, total });
+      });
+
+      dispararDescargaArchivo(resultado.blob, resultado.nombreArchivo);
+
+      setAlertaExportacion({
+        tipo: 'exito',
+        mensaje: `Copia de seguridad y ${resultado.totalPdfs} presupuestos descargados con éxito en ${resultado.nombreArchivo}.`
+      });
+
+      setTimeout(() => {
+        setAlertaExportacion((actual) => (actual?.tipo === 'exito' ? null : actual));
+      }, 6000);
+    } catch (err) {
+      console.error('Error durante la exportación ZIP:', err);
+      setAlertaExportacion({
+        tipo: 'error',
+        mensaje: 'No se pudo completar la exportación del archivo ZIP. Por favor, inténtalo de nuevo.'
+      });
+    } finally {
+      setEstadoExportacion('inactivo');
+    }
+  };
+
+  let textoBotonExportar = 'Exportar todo (.zip)';
+  if (estadoExportacion === 'generando') {
+    textoBotonExportar = `Generando (${progresoExportacion.completados}/${progresoExportacion.total})...`;
+  } else if (estadoExportacion === 'comprimiendo') {
+    textoBotonExportar = 'Comprimiendo ZIP...';
+  }
 
   // Filtros
   const [filtroEstado, setFiltroEstado] = useState('todos'); // 'todos' | 'borrador' | 'enviado' | 'aceptado' | 'rechazado' | 'caducado'
@@ -124,18 +183,43 @@ export function ListadoPresupuestos({ estado, dispatch, navegar }) {
 
   return (
     <div class="view-container">
+      {alertaExportacion && (
+        <div style={{ marginBottom: '1rem' }}>
+          <Alerta
+            tipo={alertaExportacion.tipo}
+            onCerrar={() => setAlertaExportacion(null)}
+          >
+            {alertaExportacion.mensaje}
+          </Alerta>
+        </div>
+      )}
+
       <div class="view-header">
         <div>
           <h2 class="view-title">Historial de Presupuestos</h2>
           <p class="form-hint">Consulta, edita o emite presupuestos para tus clientes.</p>
         </div>
-        <button
-          type="button"
-          class="btn btn-primary"
-          onClick={() => navegar('#/presupuesto/nuevo')}
-        >
-          + Nuevo presupuesto
-        </button>
+        <div class="header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            class={`btn btn-secondary ${estadoExportacion !== 'inactivo' ? 'btn--loading' : ''}`}
+            id="btn-exportar-todo-zip"
+            disabled={sinPresupuestosExportables || estadoExportacion !== 'inactivo'}
+            title={sinPresupuestosExportables ? 'No hay presupuestos emitidos para exportar en PDF' : undefined}
+            aria-label="Exportar todos los presupuestos emitidos y copia de datos en formato ZIP"
+            aria-busy={estadoExportacion !== 'inactivo' ? 'true' : undefined}
+            onClick={handleExportarTodoZip}
+          >
+            {textoBotonExportar}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onClick={() => navegar('#/presupuesto/nuevo')}
+          >
+            + Nuevo presupuesto
+          </button>
+        </div>
       </div>
 
       {/* Tarjeta de Filtros y Recuento */}

@@ -418,6 +418,12 @@ textarea.error {
   pointer-events: none;
 }
 
+.btn--loading {
+  opacity: 0.8 !important;
+  cursor: wait !important;
+  pointer-events: none;
+}
+
 .btn-primary {
   background-color: var(--pp-primary);
   color: var(--pp-primary-contrast);

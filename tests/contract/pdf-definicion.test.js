@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { 
   normalizarNombreCliente, 
   obtenerNombreArchivoPdf, 
-  construirDefinicionPdf 
+  construirDefinicionPdf,
+  generarPdfBuffer 
 } from '../../src/pdf/generador.js';
 
 describe('Contrato: Documento PDF del presupuesto (contracts/documento-pdf.md)', () => {
@@ -105,6 +106,17 @@ describe('Contrato: Documento PDF del presupuesto (contracts/documento-pdf.md)',
       const doc = construirDefinicionPdf('PRE-2026-0042', versionMock, false);
       const jsonStr = JSON.stringify(doc);
       expect(jsonStr).toContain('Este documento no es una factura');
+    });
+
+    it('genera un buffer binario Uint8Array válido con generarPdfBuffer', async () => {
+      const buffer = await generarPdfBuffer('PRE-2026-0042', versionMock, false);
+      expect(buffer).toBeInstanceOf(Uint8Array);
+      expect(buffer.length).toBeGreaterThan(100);
+      // Cabecera %PDF- en los primeros 4 bytes: [37, 80, 68, 70]
+      expect(buffer[0]).toBe(0x25); // '%'
+      expect(buffer[1]).toBe(0x50); // 'P'
+      expect(buffer[2]).toBe(0x44); // 'D'
+      expect(buffer[3]).toBe(0x46); // 'F'
     });
   });
 });
