@@ -1,130 +1,186 @@
-# Feature Specification: Rediseño visual, página de inicio y navegación compartida
+# Feature Specification: Rediseño Visual, Sistema de Diseño y Catálogo de Pantallas
 
 **Feature Branch**: `002-redisenio-visual-inicio`
 
 **Created**: 2026-10-05
 
-**Status**: Publicada
+**Updated**: 2026-10-07
 
-**Input**: User description: "Mejorar la presentación de PresupuestosPro (aplicación ya implementada en la spec 001) con dos cambios, sin alterar ninguna funcionalidad ni dato existente. Primero: añadir una página de inicio (index) que sea el punto de entrada de la aplicación al acceder a la raíz del servidor, con navegación clara hacia las cuatro secciones existentes (Presupuestos, Clientes, Catálogo y Perfil) y un pequeño resumen de actividad (por ejemplo, número de presupuestos por estado). Además, todas las páginas deben compartir una navegación común visible para moverse entre secciones sin usar el botón atrás. Segundo: rediseñar la apariencia visual de toda la aplicación para que resulte profesional y sobria: tipografía consistente, paleta de colores limitada definida en un único lugar, espaciado uniforme, jerarquía visual clara entre títulos, tablas, formularios y totales, y estados visuales distinguibles para los presupuestos (Borrador, Enviado, Aceptado, Rechazado, Caducado). El rediseño debe aplicarse también a la plantilla del PDF para que el documento que recibe el cliente transmita la misma imagen profesional. Debe mantenerse el enfoque mobile-first ya existente y todos los textos en español de España. La lógica de negocio, los cálculos, la API y el esquema de datos no deben cambiar en absoluto."
+**Status**: En revisión
+
+**Input**: User description: "Reescribir la especificación 002-redisenio-visual-inicio incorporando íntegramente las directrices de diseño, catálogo completo de vistas y patrones de interfaz de la pre-especificación visual (specs/pre-especificacion-visual.md): página de inicio (dashboard) con resumen de métricas y accesos rápidos, listado de presupuestos con filtros y exportación, editor de presupuestos en dos columnas con visor interactivo en tiempo real, gestión concisa de clientes con validación visual de NIF/CIF/NIE, catálogo de servicios con edición ágil, perfil profesional con carga y previsualización de logotipo, sistema de diseño sobrio centralizado mediante tokens bajo convención propia (--pp-), iconografía vectorial ligera sin dependencias externas ni CDNs, diseño mobile-first (360px+, áreas táctiles >=44x44px), coherencia total con la plantilla de PDF descargable y preservación estricta de la lógica de negocio, datos locales y principios constitucionales (YAGNI, cero alcance fantasma, cero dependencias pesadas)."
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Acceso a la página de inicio y navegación compartida (Priority: P1)
+### User Story 1 - Inicio (Dashboard) y Navegación Compartida Persistente (Priority: P1)
 
-Como profesional autónomo o freelance, cuando abro la aplicación en la dirección raíz del servicio, quiero ser recibido por una página de inicio clara que me ofrezca una visión resumida de mi actividad y me permita desplazarme directamente a cualquiera de las secciones principales (Presupuestos, Clientes, Catálogo y Perfil), manteniendo una barra o menú de navegación compartido y visible en todo momento para cambiar de sección sin recurrir al botón de retroceso del navegador.
+Como profesional autónomo o freelance, cuando accedo a la aplicación en la ruta raíz (`#/`), quiero encontrar una página de inicio estructurada que me ofrezca un cuadro de mando con el resumen cuantitativo de mi actividad comercial (`ResumenMetricas`), accesos directos visibles para las acciones clave (`AccesosRapidos`) y un listado con mis presupuestos más recientes (`ListadoRecientes`), manteniendo una barra de navegación compartida y permanente en todas las pantallas para cambiar de sección con un único clic o toque sin recurrir al botón de retroceso del navegador.
 
-**Why this priority**: Es la puerta de entrada principal y el pilar estructural que conecta toda la experiencia de usuario. Proporciona contexto inmediato sobre el negocio y elimina la necesidad de depender del historial del navegador.
+**Why this priority**: Es la puerta de entrada principal y el eje vertebrador de la experiencia de usuario. Proporciona visibilidad del negocio de inmediato y conecta fluidamente todas las áreas de la aplicación.
 
-**Independent Test**: Se puede comprobar accediendo a la URL raíz del servicio: se verifica que carga la página de inicio con los enlaces directos y el menú común, y que al hacer clic en cada sección se accede de forma inmediata y se puede regresar o cambiar de sección desde la barra de navegación persistente.
+**Independent Test**: Accediendo a la dirección raíz (`#/`), se verifica que se presenta el cuadro de mando con las tarjetas de métricas, los accesos rápidos y los últimos presupuestos registrados. Al pulsar sobre cualquier sección en la barra superior compartida, se transiciona a ella de forma instantánea manteniendo el indicador de sección activa.
 
 **Acceptance Scenarios**:
 
-1. **Given** que el usuario accede por primera vez o recarga la aplicación en la ruta raíz (`/`), **When** se presenta la pantalla, **Then** se muestra la página de inicio con enlaces directos visibles hacia las secciones de Presupuestos, Clientes, Catálogo y Perfil, junto con la navegación común superior o principal.
-2. **Given** que el usuario se encuentra en cualquier sección de la aplicación (por ejemplo, en el Catálogo o en el Editor de Presupuesto), **When** observa la parte superior/navegación de la interfaz, **Then** visualiza de forma permanente la navegación compartida con accesos directos a Inicio, Presupuestos, Clientes, Catálogo y Perfil, con indicación visual de la sección actualmente activa.
-3. **Given** que el usuario pulsa sobre cualquiera de las opciones de la navegación compartida, **When** se selecciona otra sección, **Then** la aplicación transiciona inmediatamente a la sección solicitada sin perder el estado global ni obligar a usar el botón «Atrás» del navegador.
+1. **Given** que el usuario accede a la raíz de la aplicación (`#/`), **When** se presenta la pantalla, **Then** se visualiza el dashboard con:
+   - Bloques cuantitativos de métricas (`ResumenMetricas`) con el total de presupuestos y el conteo por cada uno de los 5 estados (Borrador, Enviado, Aceptado, Rechazado, Caducado).
+   - Accesos directos de alta visibilidad (`AccesosRapidos`) para «Nuevo Presupuesto», «Ver Presupuestos», «Nuevo Cliente» y «Perfil».
+   - Tabla o lista compacta con los presupuestos más recientes (`ListadoRecientes`), mostrando fecha, número, cliente, importe y distintivo de estado.
+2. **Given** que el usuario se encuentra en cualquier vista de la aplicación (por ejemplo en Clientes o en el Catálogo), **When** observa la cabecera, **Then** la barra de navegación compartida permanece visible de forma fija o superior con accesos directos a Inicio, Presupuestos, Clientes, Catálogo y Perfil, resaltando visualmente la sección en la que se encuentra.
+3. **Given** que el usuario interactúa con la barra de navegación, **When** pulsa en cualquier destino, **Then** cambia de pantalla de forma inmediata en una sola interacción sin recargar la página ni perder datos de la sesión.
 
 ---
 
-### User Story 2 - Resumen de actividad de presupuestos en la página de inicio (Priority: P2)
+### User Story 2 - Editor de Presupuestos en Dos Columnas con Visor PDF en Tiempo Real (Priority: P1)
 
-Como usuario profesional, quiero ver en la página de inicio un resumen cuantitativo del estado de mis presupuestos (cuántos tengo en Borrador, Enviados, Aceptados, Rechazados y Caducados) junto con accesos rápidos para crear un nuevo presupuesto o consultar la lista completa, para conocer el pulso comercial de mi actividad en un solo vistazo.
+Como profesional emisor de presupuestos, cuando creo o edito una propuesta comercial (`#/presupuestos/nuevo` o `#/presupuestos/:id/editar`), quiero disponer en ordenadores y pantallas amplias de una distribución en dos columnas —formulario estructurado de datos, conceptos y desglose fiscal a la izquierda, y visor interactivo del PDF a la derecha— para comprobar el resultado documental final en tiempo real mientras introduzco los datos sin tener que alternar entre ventanas ni realizar descargas preliminares.
 
-**Why this priority**: Aporta valor de negocio inmediato y orientación de trabajo al profesional cada vez que inicia su jornada o abre la herramienta.
+**Why this priority**: Es la funcionalidad nuclear del negocio donde el autónomo invierte mayor tiempo operativo; la retroalimentación visual inmediata elimina errores de cálculo, descuidos en datos fiscales y fricción en la entrega.
 
-**Independent Test**: Creando presupuestos con diferentes estados en la aplicación y accediendo a la página de inicio, se verifica que las tarjetas de resumen muestran el conteo exacto de presupuestos para cada estado y permiten navegar al listado correspondiente.
+**Independent Test**: Al entrar en el editor de presupuestos desde un ordenador de sobremesa o portátil, se comprueba que la pantalla se divide limpiamente en dos columnas funcionales: a la izquierda los campos de emisor, cliente, líneas y desglose impositivo; a la derecha el visor en vivo. Al modificar una cantidad o añadir un concepto, el visor actualiza su contenido de forma inmediata.
 
 **Acceptance Scenarios**:
 
-1. **Given** que existen presupuestos registrados en distintos estados (Borrador, Enviado, Aceptado, Rechazado, Caducado), **When** el usuario visualiza la página de inicio, **Then** se muestran bloques o tarjetas con el total general y el desglose de unidades por cada uno de los 5 estados disponibles.
-2. **Given** que no existen presupuestos todavía en la aplicación (estado inicial o base de datos vacía), **When** el usuario entra en la página de inicio, **Then** el resumen de actividad muestra contadores a cero acompañados de una llamada a la acción amistosa para crear el primer presupuesto.
-3. **Given** que el usuario hace clic en el resumen o en el botón de acción rápida de «Nuevo Presupuesto» en la página de inicio, **When** acciona dicho enlace, **Then** se abre directamente el flujo de creación de presupuesto.
+1. **Given** un ancho de pantalla de escritorio (superior a 1024px), **When** el usuario accede al editor de presupuesto, **Then** la vista presenta una maquetación en dos columnas sincronizadas: a la izquierda los bloques de datos (`FormularioDatos`, `LineasArticulos`, `DesgloseFiscal`) y a la derecha el visor documental interactivo (`VisorPdfLive`).
+2. **Given** que el usuario modifica un precio unitario, añade una línea o ajusta el porcentaje de IRPF o IVA en el formulario, **When** el valor cambia, **Then** el desglose fiscal numérico en pantalla y el documento mostrado en el visor interactivo se recalculan y actualizan visualmente de forma automática.
+3. **Given** un dispositivo móvil o pantalla estrecha (inferior a 768px), **When** se utiliza el editor, **Then** la interfaz adopta una disposición fluida apilada o conmutación por pestañas («Edición» y «Vista Previa PDF») accesible con un solo toque y manteniendo las zonas de pulsación con tamaño cómodo.
 
 ---
 
-### User Story 3 - Rediseño visual profesional, sobrio y estados distinguibles (Priority: P3)
+### User Story 3 - Listado de Presupuestos Optimizado con Acciones Rápidas y Exportación (Priority: P2)
 
-Como profesional que gestiona propuestas comerciales, quiero que la interfaz tenga una apariencia sobria, elegante y uniforme —con tipografía legible y jerárquica, una paleta cromática restringida y armoniosa, espaciados consistentes y distinciones visuales inequívocas para los estados de presupuesto— para trabajar cómodamente y proyectar rigor profesional.
+Como usuario que administra un volumen regular de propuestas, cuando accedo al listado de presupuestos (`#/presupuestos`), quiero contar con una cabecera de acciones destacada (`CabeceraAcciones`), filtros rápidos por estado (`FiltroEstados`), una tabla limpia y legible (`TablaPresupuestos` adaptable a tarjetas táctiles en móvil) y un acceso directo a la exportación masiva (`BotonExportarZip`), para gestionar el ciclo de vida de mis propuestas de manera eficiente y ágil.
 
-**Why this priority**: Una interfaz bien jerarquizada y con colores sobrios reduce el cansancio visual, minimiza errores en formularios y tablas complejas, y mejora la percepción de calidad del producto.
+**Why this priority**: Permite al autónomo buscar, filtrar y ejecutar acciones inmediatas (editar, duplicar, descargar PDF, cambiar estado) sin saturación visual.
 
-**Independent Test**: Inspeccionando visualmente las tablas, formularios, títulos y tarjetas en todas las pantallas (tanto en escritorio como en móvil), comprobando que los estilos (tipografías, márgenes, colores de fondo y bordes) provienen de un conjunto unificado y que cada estado (Borrador, Enviado, Aceptado, Rechazado, Caducado) cuenta con una etiqueta/insignia con contraste adecuado y fácilmente reconocible.
+**Independent Test**: Accediendo a `#/presupuestos`, se comprueba la presencia del botón para crear presupuesto, el botón para exportar ZIP, los filtros por estado que actualizan la vista en tiempo real y la conversión responsiva de tabla a tarjetas al reducir la pantalla por debajo de 768px.
 
 **Acceptance Scenarios**:
 
-1. **Given** cualquier pantalla de la aplicación, **When** se evalúa la jerarquía tipográfica y espacial, **Then** los encabezados, textos auxiliares, tablas, controles de formulario y bloques de totales guardan proporciones y márgenes consistentes y armónicos.
-2. **Given** un presupuesto en cualquiera de sus posibles estados (Borrador, Enviado, Aceptado, Rechazado, Caducado), **When** se lista en tablas o se muestra en la cabecera del detalle, **Then** aparece representado con una etiqueta visual distintiva cuyo color y estilo semántico es sobrio y claramente diferenciado de los otros cuatro estados.
-3. **Given** una tabla de conceptos o un formulario con campos de entrada (cliente, emisor, líneas de presupuesto), **When** el usuario interactúa con ellos, **Then** los estados de foco, selección y error mantienen el esquema de color sobrio y una clara diferenciación respecto al fondo.
+1. **Given** la vista de listado de presupuestos, **When** el usuario pulsa sobre cualquiera de los filtros de estado (Todos, Borrador, Enviado, Aceptado, Rechazado, Caducado), **Then** la lista filtra instantáneamente los registros mostrando únicamente aquellos que coinciden con el estado seleccionado.
+2. **Given** un usuario que visualiza el listado en una pantalla móvil (desde 360px), **When** examina la lista, **Then** la información se presenta en tarjetas táctiles estructuradas sin desbordamiento horizontal, con botones de acción rápida de al menos 44x44px.
+3. **Given** presupuestos registrados en el sistema, **When** el usuario se sitúa en la cabecera del listado, **Then** el botón «Exportar todo (.zip)» permanece accesible junto al botón principal de «Nuevo Presupuesto».
 
 ---
 
-### User Story 4 - Documento PDF con estética profesional coherente (Priority: P4)
+### User Story 4 - Gestión Ágil de Clientes, Catálogo de Servicios y Perfil Profesional (Priority: P2)
 
-Como profesional que entrega propuestas a clientes finales, quiero que el archivo PDF descargable refleje exactamente el mismo rediseño visual sobrio y cuidado de la aplicación, con tipografía ordenada, distribución limpia de cabecera, datos de las partes, tabla de líneas y bloque de totales con impuestos desglosados, para que el cliente final reciba un documento formal de alta calidad.
+Como profesional autónomo, quiero disponer de pantallas dedicadas, concisas y elegantes para gestionar mis clientes con validación visual inmediata de identificadores fiscales españoles (`#/clientes`), administrar mis servicios habituales con edición ágil (`#/catalogo`), y configurar mis datos fiscales y logotipo comercial con previsualización (`#/perfil`), para mantener mis datos base organizados y preparados para emitir presupuestos en segundos.
 
-**Why this priority**: El PDF es el entregable que ve el cliente final; su apariencia condiciona directamente la imagen de marca y la confianza en el profesional que emite la propuesta.
+**Why this priority**: Constituye la base operativa sobre la que se nutren los presupuestos; formularios confusos o sin validación visual incrementan los errores fiscales y el tiempo de emisión.
 
-**Independent Test**: Generando y descargando un PDF desde la vista previa o detalle de un presupuesto, y abriéndolo en un visor estándar para constatar que la tipografía es sobria y nítida, los márgenes y alineaciones son regulares, la paleta cromática es contenida y profesional, y los datos fiscales y desgloses de impuestos se leen con total claridad.
+**Independent Test**: Se comprueba el alta de un cliente verificando que el identificador NIF/CIF/NIE muestra validación visual inmediata; se comprueba el alta de un servicio en el catálogo con precio base e IVA sugerido; y se comprueba la carga de un logotipo en el perfil verificando que se muestra su previsualización gráfica instantánea junto a las condiciones legales.
 
 **Acceptance Scenarios**:
 
-1. **Given** un presupuesto con emisor, cliente, líneas de catálogo, notas y totales calculados, **When** el usuario pulsa en descargar o previsualizar el PDF, **Then** el documento resultante presenta un diseño sobrio, con cabecera jerarquizada, datos de contacto alineados, tabla con bordes limpios y tipografía homogénea.
-2. **Given** el bloque de importes y totales en el PDF (subtotal, desglose de IVA, retención de IRPF y total a pagar en euros €), **When** se inspecciona visualmente el documento, **Then** las cantidades están alineadas a la derecha con un formateo monetario nítido y una jerarquía visual que destaca el total sin estridencias de color.
+1. **Given** la sección de Clientes (`#/clientes`), **When** el usuario abre el formulario de cliente (`ModalFormCliente`) e introduce un documento fiscal (NIF, CIF o NIE), **Then** el campo proporciona confirmación visual inmediata de validez o advertencia de formato incorrecto según el estándar fiscal español.
+2. **Given** la sección de Catálogo (`#/catalogo`), **When** el usuario visualiza o edita sus servicios (`ListaServicios`, `FormServicio`), **Then** los conceptos se presentan con tipografía ordenada, indicando precio base, IVA aplicable y botones de acción rápida para editar o eliminar.
+3. **Given** la sección de Perfil (`#/perfil`), **When** el profesional cumplimenta sus datos fiscales (`FormPerfilFiscal`), sube un archivo de imagen para su logotipo (`CargaLogotipo`) o edita sus cláusulas (`CondicionesLegales`), **Then** la previsualización del logotipo se muestra de inmediato en pantalla y los cambios se preservan localmente.
+
+---
+
+### User Story 5 - Sistema de Diseño Sobrio, Tokens Centralizados e Iconografía Ligera (Priority: P3)
+
+Como usuario que busca rigor y claridad visual, quiero que toda la aplicación se rija por un sistema de diseño profesional y sobrio —con paleta corporativa restringida, tokens centralizados bajo el prefijo `--pp-`, distintivos de estado semánticos armónicos, escala de espaciados consistente e iconografía vectorial limpia y ligera sin dependencias externas pesadas ni conexiones a servidores de terceros— para operar en una herramienta rápida, accesible y confiable.
+
+**Why this priority**: Asegura la consistencia estética y la pureza técnica del producto; evita la fragmentación visual, garantiza el cumplimiento de YAGNI y previene dependencias innecesarias de librerías de estilos o iconos de terceros.
+
+**Independent Test**: Se inspecciona la interfaz global constatando que los estilos derivan de variables centralizadas `--pp-`, que los badges de estado tienen contraste óptimo con texto en español de España, que los iconos son vectores SVG inline o caracteres semánticos sin peticiones de red externas, y que las zonas interactivas táctiles miden como mínimo 44x44px.
+
+**Acceptance Scenarios**:
+
+1. **Given** cualquier vista de la interfaz, **When** se analiza la procedencia de colores, márgenes y tipografía, **Then** todos los estilos visuales provienen de variables centralizadas con prefijo `--pp-` (paleta sobria, escala de espaciado modular `--pp-space-1` a `--pp-space-8`, y variables semánticas de estado).
+2. **Given** un presupuesto en cualquiera de los cinco estados (Borrador, Enviado, Aceptado, Rechazado, Caducado), **When** se muestra en tablas, tarjetas o cabeceras, **Then** el estado está representado por una insignia visual distinguible con contraste adecuado, fondo y tipografía sobria en español de España.
+3. **Given** botones, enlaces y campos interactivos en cualquier dispositivo, **When** se evalúa su tamaño físico de pulsación, **Then** las áreas táctiles alcanzan un mínimo de 44x44 píxeles.
+4. **Given** cualquier componente visual que requiera iconografía, **When** se renderiza en el navegador, **Then** se resuelve exclusivamente mediante vectores SVG inline integrados en el marcado o símbolos tipográficos, sin dependencias de fuentes de iconos externas ni librerías de terceros.
+
+---
+
+### User Story 6 - Plantilla de Documento PDF Profesional y Coherente (Priority: P3)
+
+Como profesional que envía presupuestos a clientes finales, quiero que el documento PDF descargable adopte exactamente el mismo lenguaje visual sobrio y ordenado que la aplicación web —con cabecera equilibrada con logotipo, datos de emisor y cliente alineados, tabla de conceptos limpia con importes formateados en euros (€), y desglose impositivo destacado— para que mis clientes reciban una propuesta comercial de impecable presencia formal.
+
+**Why this priority**: El presupuesto en PDF es el producto final tangible recibido por los clientes; su calidad gráfica condiciona la imagen de profesionalidad y la confianza en la contratación.
+
+**Independent Test**: Al descargar o previsualizar el PDF de un presupuesto con logotipo, líneas con diferentes tipos de IVA y retención de IRPF, se comprueba que la maquetación respeta la estética sobria, los márgenes son homogéneos, las cantidades se alinean rigurosamente a la derecha con el símbolo € y los datos fiscales se leen con total nitidez.
+
+**Acceptance Scenarios**:
+
+1. **Given** un presupuesto con logotipo configurado y datos fiscales completos, **When** se genera el PDF, **Then** el encabezado presenta el logotipo dimensionado armónicamente y los bloques fiscales de emisor y receptor dispuestos con equilibrio visual.
+2. **Given** la tabla de líneas y el bloque de totales en el PDF, **When** se examinan los importes, **Then** los precios y totales aparecen tabulados a la derecha, con tipografía uniforme y un bloque de totales destacado que desglosa Base Imponible, cuotas de IVA, retención de IRPF y Total a Pagar en euros (€).
 
 ---
 
 ### Edge Cases
 
-- **Cero registros existentes**: Al acceder por primera vez sin presupuestos, clientes ni catálogo, la página de inicio y la navegación deben renderizarse de forma ordenada, con los contadores en 0 y sin mostrar áreas vacías deformadas o mensajes de error técnico.
-- **Títulos o descripciones extensas en tablas y resúmenes**: En pantallas de teléfono móvil estrechas (320px - 375px), los textos largos de conceptos o nombres de clientes no deben desbordar la pantalla ni romper la estructura de las tarjetas o navegación.
-- **Nombres de estados en badges**: Los cinco estados en español de España («Borrador», «Enviado», «Aceptado», «Rechazado», «Caducado») deben mantener el texto completo visible y legible dentro de sus respectivas insignias sin truncamiento indeseado.
-- **Navegación en pantallas móviles estrechas**: La navegación compartida debe ser completamente accesible en terminales táctiles pequeños, ya sea mediante barra de iconos/texto compacta o menú colapsable accesible, sin ocultar contenido ni superponerse a los formularios o botones principales de acción.
-- **Generación de PDF con muchas líneas**: Si el presupuesto contiene múltiples conceptos que ocupan más de una página en el PDF, la maquetación debe mantener los encabezados legibles y la jerarquía de totales al pie de la última página de forma consistente.
+- **Ausencia total de datos (primer uso o base vacía)**: Al abrir la aplicación sin clientes, catálogo ni presupuestos, el dashboard y los listados deben renderizar estados vacíos proactivos, con contadores en cero y llamadas a la acción amigables para crear el primer registro sin pantallas rotas ni avisos de error.
+- **Pantallas móviles compactas (360px de ancho)**: Todos los componentes, formularios, modales y tablas adaptadas deben encajar dentro del ancho útil de 360px sin desbordamiento horizontal accidental, manteniendo un margen mínimo de seguridad y áreas de toque >=44x44px.
+- **Nombres y conceptos extensos**: Textos de servicios, descripciones de líneas o nombres de clientes de gran longitud deben ajustarse adecuadamente sin superponerse a los importes ni alterar la maquetación de tarjetas o tablas.
+- **Visualización simultánea en pantallas intermedias (Tablets entre 768px y 1024px)**: El editor de presupuestos debe alternar fluidamente entre la disposición apilada y la de dos columnas sin solapamiento entre la columna de formulario y el visor interactivo.
+- **Contraste y legibilidad en badges de estado**: Los colores de fondo y texto de los 5 distintivos semánticos deben cumplir los estándares de contraste visual accesible para lectura nítida en modo claro sobre fondos estándar.
+- **Presupuestos con múltiples páginas en PDF**: La maquetación del PDF debe dividir ordenadamente las tablas extensas entre páginas consecutivas, repitiendo encabezados cuando proceda y ubicando el bloque de totales al final de forma limpia.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: El sistema DEBE establecer la página de inicio (Index / Cuadro de mando) como la vista inicial por defecto cuando el usuario accede a la raíz de la aplicación.
-- **FR-002**: La página de inicio DEBE presentar una sección de bienvenida y resumen de actividad que muestre el número total de presupuestos y el desglose de cantidades clasificadas por cada uno de los cinco estados: Borrador, Enviado, Aceptado, Rechazado y Caducado.
-- **FR-003**: La página de inicio DEBE proporcionar enlaces directos o accesos destacados hacia las cuatro secciones existentes de la aplicación: Presupuestos, Clientes, Catálogo y Perfil, además de un acceso directo para crear un nuevo presupuesto.
-- **FR-004**: El sistema DEBE disponer de un componente de navegación común y visible en todas las páginas y vistas de la aplicación, permitiendo saltar a Inicio, Presupuestos, Clientes, Catálogo o Perfil con un único clic/toque sin necesidad de recurrir al historial de navegación del navegador.
-- **FR-005**: La navegación común DEBE destacar visualmente la sección en la que se encuentra el usuario en cada momento (estado activo).
-- **FR-006**: Toda la interfaz de usuario DEBE emplear una paleta de colores sobria y limitada, definida de manera centralizada en un único punto del sistema de diseño, garantizando coherencia visual en toda la aplicación.
-- **FR-007**: Toda la aplicación DEBE emplear una escala tipográfica estructurada y consistente para títulos principales, títulos de sección, cuerpo de texto, etiquetas y valores numéricos.
-- **FR-008**: Los cinco estados del presupuesto (Borrador, Enviado, Aceptado, Rechazado, Caducado) DEBEN disponer de distintivos visuales (etiquetas/insignias) claramente reconocibles y diferenciados entre sí mediante colores semánticos sobrios y texto legible en español de España.
-- **FR-009**: La disposición de elementos, formularios, tablas y cajas de totales DEBE aplicar un sistema de espaciado uniforme y armónico en todas las vistas de la herramienta.
-- **FR-010**: El diseño de la interfaz DEBE mantener el enfoque «mobile-first», garantizando una experiencia visual y de interacción cómoda tanto en pantallas de teléfonos inteligentes como en tabletas y ordenadores de sobremesa.
-- **FR-011**: La plantilla de generación de documentos PDF DEBE adoptar el mismo lenguaje estético sobrio y profesional que la aplicación web, incluyendo tipografía armónica, paleta de colores contenida, tablas alineadas y jerarquía destacada para el resumen de impuestos (IVA, IRPF) y el total a pagar en euros (€).
-- **FR-012**: El sistema DEBE garantizar que todos los textos, rótulos, mensajes de ayuda y estados permanezcan redactados íntegramente en español de España (es-ES) y con la moneda Euro (€).
-- **FR-013**: El sistema DEBE conservar estrictamente intacta toda la lógica de negocio, las fórmulas de cálculo de importes e impuestos, la estructura de almacenamiento de datos existente y los contratos funcionales previos sin alteración de datos de usuario.
+- **FR-001**: El sistema DEBE mostrar la vista de Inicio / Dashboard (`#/`) como pantalla por defecto al acceder a la raíz de la aplicación.
+- **FR-002**: El Dashboard DEBE incluir un componente de métricas (`ResumenMetricas`) que presente el total global de presupuestos y el desglose cuantitativo para cada uno de los 5 estados: Borrador, Enviado, Aceptado, Rechazado y Caducado.
+- **FR-003**: El Dashboard DEBE disponer de accesos directos destacados (`AccesosRapidos`) que permitan iniciar la creación de un nuevo presupuesto, consultar el listado completo, añadir un cliente o acceder al perfil profesional en 1 clic/toque.
+- **FR-004**: El Dashboard DEBE mostrar un bloque de actividad reciente (`ListadoRecientes`) con los últimos presupuestos registrados, indicando fecha, número correlativo, cliente, importe total y distintivo de estado.
+- **FR-005**: El sistema DEBE incorporar una barra de navegación compartida y permanente visible en todas las vistas de la aplicación, con enlaces directos a Inicio (`#/`), Presupuestos (`#/presupuestos`), Clientes (`#/clientes`), Catálogo (`#/catalogo`) y Perfil (`#/perfil`).
+- **FR-006**: La barra de navegación compartida DEBE resaltar de forma unívoca la sección que se encuentre activa en cada momento.
+- **FR-007**: El listado de presupuestos (`#/presupuestos`) DEBE incluir una cabecera de acciones (`CabeceraAcciones`) con acceso directo a «Nuevo Presupuesto» y «Exportar todo (.zip)», filtros rápidos por estado (`FiltroEstados`) y tabla de registros (`TablaPresupuestos`).
+- **FR-008**: En dispositivos móviles con pantallas estrechas (ancho inferior a 768px), la tabla de presupuestos DEBE transformarse en tarjetas táctiles independientes que eviten el desplazamiento horizontal y ofrezcan botones de acción rápida accesibles.
+- **FR-009**: El editor de presupuestos (`#/presupuestos/nuevo` y `#/presupuestos/:id/editar`) DEBE ofrecer en pantallas de escritorio (ancho igual o superior a 1024px) una distribución en dos columnas: columna de edición a la izquierda (`FormularioDatos`, `LineasArticulos`, `DesgloseFiscal`) y visor de PDF interactivo en tiempo real a la derecha (`VisorPdfLive`).
+- **FR-010**: En el editor de presupuestos, cualquier alteración en los campos del formulario, conceptos o tipos impositivos DEBE reflejarse de forma automática e inmediata en el desglose fiscal y en la vista previa del visor interactivo.
+- **FR-011**: En dispositivos móviles, el editor de presupuestos DEBE permitir alternar fluidamente entre la edición del formulario y la visualización del PDF mediante navegación secuencial o pestañas accesibles en un toque.
+- **FR-012**: La vista de Clientes (`#/clientes`) DEBE presentar el listado de clientes (`TablaClientes`) y un formulario modal conciso (`ModalFormCliente`) con validación visual interactiva en tiempo real del formato de NIF, CIF o NIE español.
+- **FR-013**: La vista de Catálogo (`#/catalogo`) DEBE permitir consultar (`ListaServicios`) y dar de alta o modificar conceptos de servicios (`FormServicio`), mostrando el precio unitario base y el tipo de IVA sugerido.
+- **FR-014**: La vista de Perfil Profesional (`#/perfil`) DEBE estructurar los campos fiscales del profesional emisor (`FormPerfilFiscal`), permitir la carga y previsualización gráfica instantánea del logotipo (`CargaLogotipo`) y la configuración de cláusulas comerciales (`CondicionesLegales`).
+- **FR-015**: Toda la interfaz visual DEBE gobernarse mediante un conjunto centralizado de tokens de diseño bajo el prefijo `--pp-`, incluyendo la paleta de colores corporativos sobrios, sombras sutiles, escala tipográfica y escala modular de espaciados (`--pp-space-1` a `--pp-space-8`).
+- **FR-016**: Los cinco estados de presupuesto (Borrador, Enviado, Aceptado, Rechazado y Caducado) DEBEN disponer de distintivos visuales (*badges*) con estilos semánticos sobrios definidos centralmente y texto completo en español de España sin abreviaciones crípticas.
+- **FR-017**: La iconografía funcional de toda la aplicación DEBE componerse exclusivamente de vectores SVG inline nativos y limpios o caracteres tipográficos semánticos, quedando prohibido cargar bibliotecas de iconos de terceros o recursos remotos mediante CDN.
+- **FR-018**: Todos los elementos interactivos (botones, pestañas, selectores, enlaces de acción) DEBEN garantizar un área de pulsación táctil mínima de 44x44 píxeles en dispositivos táctiles y móviles.
+- **FR-019**: La plantilla de generación de documentos PDF DEBE reflejar fielmente la identidad estética de la aplicación web: cabecera armónica con logotipo, bloques fiscales alineados, tabla ordenada de conceptos y resumen tributario destacado en euros (€).
+- **FR-020**: El sistema DEBE mantener estrictamente intacta toda la lógica de negocio previa, la persistencia en almacenamiento local del cliente, la aritmética fiscal en céntimos y los contratos funcionales existentes, sin alterar datos de usuario ni introducir servidores o servicios de telemetría externos.
 
 ### Key Entities *(include if feature involves data)*
 
-- **Resumen de Actividad**: Entidad de presentación que consolida la información agregada para la página de inicio.
-  - Atributos conceptuales: total de presupuestos registrados, cantidad de presupuestos en borrador, cantidad de presupuestos enviados, cantidad de presupuestos aceptados, cantidad de presupuestos rechazados y cantidad de presupuestos caducados.
-- **Estado de Presupuesto (Identidad Visual)**: Entidad que asocia cada valor del ciclo de vida del presupuesto con su representación en la interfaz.
-  - Valores: Borrador, Enviado, Aceptado, Rechazado, Caducado.
-  - Atributos visuales: texto identificativo en español de España, variante de color semántico sobrio (tono de fondo, tono de texto y borde acorde con la paleta centralizada).
-- **Tema Visual / Sistema de Diseño**: Entidad conceptual que gobierna la apariencia de la aplicación y del PDF.
-  - Atributos: paleta de colores centralizada (colores neutros principales, color primario corporativo sobrio, colores semánticos para estados y alertas), escala tipográfica normalizada y escala de espaciados uniformes.
+- **Resumen Cuantitativo de Actividad (`ResumenMetricas`)**:
+  - Representa el balance general de presupuestos calculados en el cliente.
+  - Atributos conceptuales: número total de presupuestos registrados, conteo en estado Borrador, conteo en estado Enviado, conteo en estado Aceptado, conteo en estado Rechazado y conteo en estado Caducado.
+- **Estado de Presupuesto e Identidad Semántica**:
+  - Valores de ciclo de vida: Borrador, Enviado, Aceptado, Rechazado, Caducado.
+  - Atributos visuales: etiqueta textual en español de España, colores semánticos sobrios (fondo, texto, borde) asociados a variables del sistema de diseño.
+- **Catálogo de Vistas del Sistema**:
+  - Dashboard / Inicio (`#/`): punto de entrada con métricas, accesos directos y recientes.
+  - Listado de Presupuestos (`#/presupuestos`): tabla/tarjetas de presupuestos con filtros y exportación.
+  - Editor de Presupuestos (`#/presupuestos/nuevo`, `#/presupuestos/:id/editar`): formulario y visor en vivo.
+  - Clientes (`#/clientes`): directorio y formulario con validación fiscal de NIF/CIF/NIE.
+  - Catálogo de Servicios (`#/catalogo`): conceptos habituales con precio base e IVA sugerido.
+  - Perfil Profesional (`#/perfil`): datos del emisor, logotipo y condiciones generales.
+- **Tokens del Sistema de Diseño (`--pp-*`)**:
+  - Entidad de especificación de estilos que centraliza la paleta sobria corporativa, escala modular de espaciados, tipografías y semántica de insignias.
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
-- **SC-001**: Al acceder a la dirección raíz de la aplicación, el 100% de los usuarios son dirigidos directamente a la página de inicio en un tiempo de carga visual inmediato (inferior a 1 segundo en condiciones normales).
-- **SC-002**: Desde cualquier pantalla o sección de la aplicación, el usuario puede cambiar a cualquiera de las restantes cuatro secciones o volver al inicio en exactamente 1 interacción (un clic o toque) a través de la navegación común visible.
-- **SC-003**: El resumen de actividad de la página de inicio refleja de forma exacta (100% de fidelidad) el número de presupuestos existentes en cada uno de los 5 estados en base a los registros almacenados.
-- **SC-004**: Los cinco estados de presupuesto cuentan con distintivos visuales diferenciados que superan los criterios de contraste visual y legibilidad, permitiendo a los usuarios identificar el estado de una propuesta de un solo vistazo.
-- **SC-005**: El 100% de las variables cromáticas principales de la interfaz están definidas en un único archivo de configuración de estilos centralizado.
-- **SC-006**: El documento PDF generado y descargado exhibe la nueva plantilla sobria y profesional, manteniendo la totalidad de los datos fiscales, conceptos y cálculos monetarios idénticos a los del presupuesto en pantalla.
-- **SC-007**: El 100% de los componentes de navegación, páginas y formularios se adaptan fluidamente a anchos de pantalla móviles (desde 320 píxeles de ancho) sin presentar desbordamientos horizontales no deseados.
-- **SC-008**: Ninguna prueba o funcionalidad de cálculo de totales, guardado de clientes, guardado de conceptos ni almacenamiento de presupuestos sufre regresiones funcionales ni cambios en su esquema de datos.
+- **SC-001**: Al acceder a la raíz del servicio (`#/`), el 100% de los usuarios acceden directamente al cuadro de mando en un tiempo de carga visual inferior a 1 segundo.
+- **SC-002**: La barra de navegación compartida permite desplazarse a cualquiera de las 5 secciones principales en exactamente 1 interacción (un clic o toque) desde cualquier pantalla.
+- **SC-003**: El cuadro de métricas del Dashboard refleja con un 100% de precisión y fidelidad el conteo de presupuestos en base a los registros locales existentes.
+- **SC-004**: En pantallas de escritorio (>=1024px), el editor presenta la distribución en dos columnas simultáneas, permitiendo al usuario ver el visor interactivo de PDF actualizado en menos de 300 ms tras pausar la edición.
+- **SC-005**: En pantallas móviles de 360px o más, el 100% de las pantallas, modales y tarjetas se visualizan de forma íntegra sin presentar barras de desplazamiento horizontal.
+- **SC-006**: Todos los elementos táctiles interactivos de la aplicación cumplen con la directriz de accesibilidad de disponer de un área mínima de contacto de 44x44 píxeles.
+- **SC-007**: Los 5 estados del ciclo de vida del presupuesto disponen de insignias distintivas claramente diferenciadas y legibles en español de España que superan las pautas de contraste visual.
+- **SC-008**: La aplicación no efectúa ninguna petición a redes externas o CDNs para la carga de tipografías, iconos, hojas de estilo o bibliotecas de interfaz gráfica (100% autónoma y local).
+- **SC-009**: Ninguna función de cálculo de importes, almacenamiento local en cliente, validación fiscal o exportación sufre regresiones funcionales.
 
 ## Assumptions
 
-- **A-001**: La aplicación continúa funcionando como una solución web cliente, conservando el almacenamiento local previamente implementado sin requerir un servidor de autenticación ni backend externo para este rediseño.
-- **A-002**: Las cuatro secciones existentes (Presupuestos, Clientes, Catálogo y Perfil) conservan sus rutas y componentes funcionales internos, actuando la página de inicio como centro de bienvenida y punto de partida de la navegación.
-- **A-003**: La paleta sobria y profesional utilizará tonos neutros (grises estructurados, pizarra o similar) combinados con un color corporativo principal sobrio (como un azul petróleo o marino clásico) y toques de color semántico moderados para estados (verde para aceptado, ámbar/ocre para enviado o caducado, rojo apagado para rechazado, gris neutro para borrador).
-- **A-004**: El rediseño de la plantilla PDF mantiene el formato estándar A4 vertical y se actualiza exclusivamente en cuanto a maquetación, tipografías, colores de acento y márgenes, sin alterar los campos legales de emisor, cliente ni conceptos tributarios (IVA, IRPF).
+- **A-001**: La aplicación opera enteramente como Single Page Application (SPA) del lado del cliente, utilizando almacenamiento local en el navegador del usuario sin requerir backend ni base de datos centralizada.
+- **A-002**: Las rutas del sistema operan bajo el estándar de enrutamiento por hash (`#/`, `#/presupuestos`, `#/clientes`, `#/catalogo`, `#/perfil`).
+- **A-003**: La iconografía se resuelve de forma nativa e inline mediante vectores SVG o tipografía semántica, manteniendo el principio de cero dependencias innecesarias (YAGNI).
+- **A-004**: El rediseño de la plantilla PDF mantiene el formato internacional estándar A4 vertical, adaptando su tipografía, márgenes y acentos de color al estilo visual sobrio de la interfaz web.
+- **A-005**: Los cálculos fiscales continúan operando con aritmética entera en céntimos para evitar errores de redondeo en IVA e IRPF.
