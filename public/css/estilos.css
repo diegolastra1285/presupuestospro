@@ -1125,6 +1125,15 @@ textarea.error {
   }
 }
 
+@media (max-width: 767px) {
+  .desktop-table-view {
+    display: none !important;
+  }
+  .mobile-cards-view {
+    display: flex !important;
+  }
+}
+
 @media (max-width: 480px) {
   .metric-grid {
     grid-template-columns: 1fr;

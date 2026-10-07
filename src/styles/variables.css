@@ -1,46 +1,96 @@
 :root {
-  --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* Tokens del Sistema de Diseño PresupuestosPro (--pp-*) */
+  --pp-primary: #1e3a8a;          /* Azul marino profundo profesional */
+  --pp-primary-hover: #1e40af;
+  --pp-primary-light: #eff6ff;
+  --pp-primary-contrast: #ffffff;
+
+  --pp-bg: #f8fafc;               /* Gris pizarra muy claro */
+  --pp-surface: #ffffff;          /* Blanco puro */
+  --pp-surface-subtle: #f1f5f9;   /* Gris neutro */
+  --pp-border: #cbd5e1;           /* Borde neutro equilibrado */
+  --pp-border-light: #e2e8f0;
+
+  --pp-text: #0f172a;             /* Texto de alto contraste */
+  --pp-text-muted: #64748b;       /* Texto secundario */
+  --pp-text-inverse: #ffffff;
+  --pp-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --pp-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Escala de Espaciado Modular */
+  --pp-space-1: 0.25rem;  /* 4px */
+  --pp-space-2: 0.5rem;   /* 8px */
+  --pp-space-3: 0.75rem;  /* 12px */
+  --pp-space-4: 1rem;     /* 16px */
+  --pp-space-6: 1.5rem;   /* 24px */
+  --pp-space-8: 2rem;     /* 32px */
+
+  /* Estados de Presupuestos (Badges) */
+  --pp-badge-borrador-bg: #f1f5f9;
+  --pp-badge-borrador-text: #475569;
+  --pp-badge-borrador-border: #cbd5e1;
+
+  --pp-badge-enviado-bg: #f0f9ff;
+  --pp-badge-enviado-text: #0369a1;
+  --pp-badge-enviado-border: #bae6fd;
+
+  --pp-badge-aceptado-bg: #f0fdf4;
+  --pp-badge-aceptado-text: #15803d;
+  --pp-badge-aceptado-border: #bbf7d0;
+
+  --pp-badge-rechazado-bg: #fef2f2;
+  --pp-badge-rechazado-text: #b91c1c;
+  --pp-badge-rechazado-border: #fecaca;
+
+  --pp-badge-caducado-bg: #fffbeb;
+  --pp-badge-caducado-text: #b45309;
+  --pp-badge-caducado-border: #fde68a;
+
+  /* Accesibilidad Táctil */
+  --pp-touch-size: 44px;
+  --pp-touch-min: 44px;
+  --touch-target-min: 44px;
+
+  --font-family: var(--pp-font-sans);
+  --font-family-mono: var(--pp-font-mono);
 
   /* Colores primarios */
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-subtle: #eff6ff;
-  --color-primary-text: #ffffff;
+  --color-primary: var(--pp-primary);
+  --color-primary-hover: var(--pp-primary-hover);
+  --color-primary-subtle: var(--pp-primary-light);
+  --color-primary-text: var(--pp-primary-contrast);
 
   /* Estados */
-  --color-success: #16a34a;
-  --color-success-bg: #f0fdf4;
-  --color-success-border: #bbf7d0;
+  --color-success: #15803d;
+  --color-success-bg: var(--pp-badge-aceptado-bg);
+  --color-success-border: var(--pp-badge-aceptado-border);
   
-  --color-warning: #d97706;
-  --color-warning-bg: #fffbeb;
-  --color-warning-border: #fde68a;
+  --color-warning: #b45309;
+  --color-warning-bg: var(--pp-badge-caducado-bg);
+  --color-warning-border: var(--pp-badge-caducado-border);
   
-  --color-danger: #dc2626;
-  --color-danger-bg: #fef2f2;
-  --color-danger-border: #fecaca;
+  --color-danger: #b91c1c;
+  --color-danger-bg: var(--pp-badge-rechazado-bg);
+  --color-danger-border: var(--pp-badge-rechazado-border);
 
   /* Tema Claro (por defecto) */
-  --color-bg: #f8fafc;
-  --color-surface: #ffffff;
-  --color-surface-subtle: #f1f5f9;
-  --color-surface-hover: #f8fafc;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
-  --color-border: #e2e8f0;
-  --color-border-strong: #cbd5e1;
+  --color-bg: var(--pp-bg);
+  --color-surface: var(--pp-surface);
+  --color-surface-subtle: var(--pp-surface-subtle);
+  --color-surface-hover: var(--pp-bg);
+  --color-text: var(--pp-text);
+  --color-text-muted: var(--pp-text-muted);
+  --color-border: var(--pp-border-light);
+  --color-border-strong: var(--pp-border);
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
   --radius-full: 9999px;
-
-  --touch-target-min: 44px;
 }
 
 [data-theme="oscuro"] {
