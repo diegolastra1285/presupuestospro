@@ -81,7 +81,7 @@ Como usuario que trabaja con nombres comerciales variados (clientes con barras, 
 
 **Acceptance Scenarios**:
 
-1. **Given** un presupuesto emitido con número `2026-001` y un cliente llamado `Diseño/Web S.L.`, **When** se examinan los archivos dentro del `.zip`, **Then** el documento PDF asociado lleva un nombre libre de barras y caracteres conflictivos (por ejemplo `2026-001 - DiseñoWeb S.L..pdf` o `2026-001 - Diseño_Web S.L..pdf`).
+1. **Given** un presupuesto emitido con número `2026-001` y un cliente llamado `Diseño/Web S.L.`, **When** se examinan los archivos dentro del `.zip`, **Then** el documento PDF asociado lleva un nombre libre de barras y caracteres conflictivos mediante supresión directa (por ejemplo `2026-001 - DiseñoWeb S.L..pdf`).
 2. **Given** dos o más presupuestos que pudieran generar una colisión accidental de nombre de archivo dentro del mismo `.zip`, **When** se conforma la estructura del comprimido, **Then** el sistema asegura nombres únicos para cada archivo sin sobreescribir ni omitir ningún documento.
 3. **Given** un presupuesto con un nombre de cliente extraordinariamente largo, **When** se construye el nombre de archivo, **Then** la longitud se acota a un límite razonable (hasta 60 caracteres en el nombre del cliente) para evitar que se superen los límites máximos de longitud de ruta de los sistemas operativos.
 

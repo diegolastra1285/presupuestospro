@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "fflate": "^0.8.3",
     "idb-keyval": "^6.2.1",
     "pdfmake": "^0.2.18",
     "preact": "^10.26.4"

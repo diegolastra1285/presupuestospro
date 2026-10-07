@@ -20,7 +20,7 @@
 
 **Purpose**: Project initialization and basic dependencies
 
-- [ ] T001 Install `fflate` dependency (^0.8.3) in `package.json` for in-browser client ZIP compression
+- [X] T001 Install `fflate` dependency (^0.8.3) in `package.json` for in-browser client ZIP compression
 
 ---
 
@@ -30,9 +30,9 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T002 [P] Implement file naming and sanitization utility in `src/utils/archivos.js` with `normalizarNombrePdfLote(numero, nombreCliente, nombresExistentes)` applying data-model constraints verbatim: "Eliminación de caracteres prohibidos en sistemas de archivos: `[\\/:*?\"<>|]` y caracteres de control `[\\x00-\\x1F\\x7F]`", "Colapso de múltiples espacios en blanco a un único espacio", "Truncado a máximo 60 caracteres", "Valor por defecto si queda vacío: 'Cliente'", and "Desambiguación ante colisiones: Si dos presupuestos arrojan el mismo nombre de archivo, se añade un sufijo diferenciador correlativo (ej. `{Número} - {Cliente}_2.pdf`)"
-- [ ] T003 [P] Create unit test suite for file sanitization in `tests/unit/archivos.test.js` validating all rules from `contracts/contrato-exportacion-zip.md` (illegal characters, control characters, space collapsing, empty/null fallbacks, 60-character truncation, and collision suffixes)
-- [ ] T004 Expose binary PDF generation function `generarPdfBuffer(numero, version, esAnulado)` in `src/pdf/generador.js` returning `Promise<Uint8Array>` using `pdfMake.createPdf(docDefinition).getBuffer()` with watermark "ANULADO" support when `esAnulado === true`
+- [X] T002 [P] Implement file naming and sanitization utility in `src/utils/archivos.js` with `normalizarNombrePdfLote(numero, nombreCliente, nombresExistentes)` applying data-model constraints verbatim: "Eliminación de caracteres prohibidos en sistemas de archivos: `[\\/:*?\"<>|]` y caracteres de control `[\\x00-\\x1F\\x7F]`", "Colapso de múltiples espacios en blanco a un único espacio", "Truncado a máximo 60 caracteres", "Valor por defecto si queda vacío: 'Cliente'", and "Desambiguación ante colisiones: Si dos presupuestos arrojan el mismo nombre de archivo, se añade un sufijo diferenciador correlativo (ej. `{Número} - {Cliente}_2.pdf`)"
+- [X] T003 [P] Create unit test suite for file sanitization in `tests/unit/archivos.test.js` validating all rules from `contracts/contrato-exportacion-zip.md` (illegal characters, control characters, space collapsing, empty/null fallbacks, 60-character truncation, and collision suffixes)
+- [X] T004 Expose binary PDF generation function `generarPdfBuffer(numero, version, esAnulado)` in `src/pdf/generador.js` returning `Promise<Uint8Array>` using `pdfMake.createPdf(docDefinition).getBuffer()` with watermark "ANULADO" support when `esAnulado === true`
 
 **Checkpoint**: Foundation ready - binary PDF generation and sanitized naming utilities available for user stories.
 
@@ -46,12 +46,12 @@
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T005 [P] [US1] Create contract test for ZIP packaging in `tests/contract/exportacion-zip.test.js` verifying flat root structure, presence and schema validity of `datos.json` via `validarEsquemaCopiaSeguridad`, and exact inclusion of consolidated PDFs
+- [X] T005 [P] [US1] Create contract test for ZIP packaging in `tests/contract/exportacion-zip.test.js` verifying flat root structure, presence and schema validity of `datos.json` via `validarEsquemaCopiaSeguridad`, and exact inclusion of consolidated PDFs
 
 ### Implementation for User Story 1
 
-- [ ] T006 [US1] Implement ZIP export orchestrator service in `src/services/exportacion-zip.js` with `exportarTodoZip(estado, onProgreso)`: filter consolidated budgets (`numero`, `estado !== 'borrador'`, `versiones.length > 0`), take latest active version (`versiones[versiones.length - 1]`), generate `datos.json` using `generarCopiaSeguridadJson(estado)`, build binary PDFs using `generarPdfBuffer`, assemble flat root ZIP with `fflate`, and implement browser download trigger `dispararDescargaArchivo(blob, nombreArchivo)`
-- [ ] T007 [US1] Integrate «Exportar todo (.zip)» button in `src/components/presupuestos/ListadoPresupuestos.jsx` inside `.view-header .header-actions` calling `exportarTodoZip(estado)` with global unfiltered state and triggering download of `presupuestospro-copia-AAAA-MM-DD.zip`
+- [X] T006 [US1] Implement ZIP export orchestrator service in `src/services/exportacion-zip.js` with `exportarTodoZip(estado, onProgreso)`: filter consolidated budgets (`numero`, `estado !== 'borrador'`, `versiones.length > 0`), take latest active version (`versiones[versiones.length - 1]`), generate `datos.json` using `generarCopiaSeguridadJson(estado)`, build binary PDFs using `generarPdfBuffer`, assemble flat root ZIP with `fflate`, and implement browser download trigger `dispararDescargaArchivo(blob, nombreArchivo)`
+- [X] T007 [US1] Integrate «Exportar todo (.zip)» button in `src/components/presupuestos/ListadoPresupuestos.jsx` inside `.view-header .header-actions` calling `exportarTodoZip(estado)` with global unfiltered state and triggering download of `presupuestospro-copia-AAAA-MM-DD.zip`
 
 **Checkpoint**: User Story 1 (MVP) is functional and independently testable. The user can export all budgets and backup data in a single ZIP.
 
@@ -65,7 +65,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T008 [US2] Update `src/components/presupuestos/ListadoPresupuestos.jsx` to compute `presupuestosExportables` (budgets with official number and at least one version, excluding drafts), disabling the export button (`disabled={true}`) with `title="No hay presupuestos emitidos para exportar en PDF"` and accessible `aria-label` when no exportable budgets exist
+- [X] T008 [US2] Update `src/components/presupuestos/ListadoPresupuestos.jsx` to compute `presupuestosExportables` (budgets with official number and at least one version, excluding drafts), disabling the export button (`disabled={true}`) with `title="No hay presupuestos emitidos para exportar en PDF"` and accessible `aria-label` when no exportable budgets exist
 
 **Checkpoint**: User Story 2 is functional. Empty exports are prevented when there are no official budgets.
 
@@ -79,8 +79,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T009 [US3] Add sequential async yielding and progress reporting callbacks to `src/services/exportacion-zip.js` triggering `onProgreso({ fase: 'generando', completados, total })` per PDF with event loop pause (`setTimeout(0)`) and `onProgreso({ fase: 'comprimiendo', completados: total, total })` during compression
-- [ ] T010 [US3] Update `src/components/presupuestos/ListadoPresupuestos.jsx` to manage UI export states (`'inactivo'`, `'generando'`, `'comprimiendo'`), render dynamic button text, set `aria-busy="true"` during generation, and display auto-dismissing `<Alerta tipo="exito">` on completion or `<Alerta tipo="error">` on failure
+- [X] T009 [US3] Add sequential async yielding and progress reporting callbacks to `src/services/exportacion-zip.js` triggering `onProgreso({ fase: 'generando', completados, total })` per PDF with event loop pause (`setTimeout(0)`) and `onProgreso({ fase: 'comprimiendo', completados: total, total })` during compression
+- [X] T010 [US3] Update `src/components/presupuestos/ListadoPresupuestos.jsx` to manage UI export states (`'inactivo'`, `'generando'`, `'comprimiendo'`), render dynamic button text, set `aria-busy="true"` during generation, and display auto-dismissing `<Alerta tipo="exito">` on completion or `<Alerta tipo="error">` on failure
 
 **Checkpoint**: User Story 3 is functional. Smooth visual progress and error recovery are fully working.
 
@@ -94,8 +94,8 @@
 
 ### Implementation for User Story 4
 
-- [ ] T011 [US4] Connect `src/services/exportacion-zip.js` with `normalizarNombrePdfLote` passing a mutable `Set` of filenames to ensure zero filename collisions and adherence to length and character rules across all budgets in the ZIP
-- [ ] T012 [P] [US4] Add integration test cases in `tests/contract/exportacion-zip.test.js` validating sanitization of complex client names, collision handling with `_${i}` suffix, and 60-character length limits within the generated ZIP
+- [X] T011 [US4] Connect `src/services/exportacion-zip.js` with `normalizarNombrePdfLote` passing a mutable `Set` of filenames to ensure zero filename collisions and adherence to length and character rules across all budgets in the ZIP
+- [X] T012 [P] [US4] Add integration test cases in `tests/contract/exportacion-zip.test.js` validating sanitization of complex client names, collision handling with `_${i}` suffix, and 60-character length limits within the generated ZIP
 
 **Checkpoint**: User Story 4 is functional. Filenames are clean, safe, and collision-free across all desktop platforms.
 
@@ -105,10 +105,10 @@
 
 **Purpose**: Quality assurance, end-to-end verification, performance validation, and project memory maintenance
 
-- [ ] T013 Run full automated test suite with `npm test` verifying all unit and contract tests pass
-- [ ] T014 Execute manual end-to-end scenarios described in `specs/003-exportar-todo-zip/quickstart.md` (empty state, multi-budget export, unzipping verification, and visual filters independence)
-- [ ] T015 Verify batch performance goal (SC-004) generating and compressing up to 20 budgets in under 10 seconds without UI freeze
-- [ ] T016 Update `AGENTS.md` with new design decisions and conventions from this feature (one line per decision with `[003]` reference), documenting `fflate` usage, flat root ZIP structure, and client naming normalization rules
+- [X] T013 Run full automated test suite with `npm test` verifying all unit and contract tests pass
+- [X] T014 Execute manual end-to-end scenarios described in `specs/003-exportar-todo-zip/quickstart.md` (empty state, multi-budget export, unzipping verification, and visual filters independence)
+- [X] T015 Verify batch performance goal (SC-004) generating and compressing up to 20 budgets in under 10 seconds without UI freeze
+- [X] T016 Update `AGENTS.md` with new design decisions and conventions from this feature (one line per decision with `[003]` reference), documenting `fflate` usage, flat root ZIP structure, and client naming normalization rules
 
 ---
 

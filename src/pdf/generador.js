@@ -318,3 +318,30 @@ export async function descargarPdf(numero, version, esAnulado = false) {
     });
   });
 }
+
+/**
+ * Genera el documento PDF como un Uint8Array binario (para empaquetado en ZIP).
+ * @param {string} numero - Código del presupuesto
+ * @param {object} version - Snapshot de versión a exportar
+ * @param {boolean} [esAnulado=false]
+ * @returns {Promise<Uint8Array>}
+ */
+export async function generarPdfBuffer(numero, version, esAnulado = false) {
+  const pdfMake = await cargarPdfMake();
+  const docDefinition = construirDefinicionPdf(numero, version, esAnulado);
+
+  return new Promise((resolve, reject) => {
+    try {
+      pdfMake.createPdf(docDefinition).getBuffer((buffer) => {
+        if (buffer instanceof Uint8Array) {
+          resolve(buffer);
+        } else {
+          resolve(new Uint8Array(buffer));
+        }
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+

@@ -8,6 +8,7 @@ PresupuestoPro es una Single Page Application (SPA/PWA) local y sin backend para
 - **Estilos**: CSS nativo con Custom Properties centralizadas (`public/css/estilos.css`), responsive mobile-first y diseño sobrio.
 - **Persistencia**: 100% cliente en IndexedDB (`idb-keyval`, clave `presupuestopro:estado`), autosave con debounce y respaldo JSON.
 - **Documentos**: Generación de PDF en cliente mediante `pdfmake` con carga diferida (*lazy loading*).
+- **Empaquetado y Compresión**: [003] Compresión ZIP 100% en cliente mediante `fflate` (~8 KB, ESM puro), sin backend ni servicios externos.
 - **PWA / Offline**: Service Worker con `vite-plugin-pwa` para funcionamiento autónomo sin conexión tras la primera carga.
 - **Lógica de negocio**: Aritmética entera en céntimos (cálculos fiscales exactos de IVA/IRPF) y enrutamiento por hash (`#/`).
 
@@ -22,5 +23,6 @@ PresupuestoPro es una Single Page Application (SPA/PWA) local y sin backend para
 - **Simplicidad (YAGNI)**: Cero librerías redundantes; resolver siempre con la solución más limpia y ligera.
 - **Cero Alcance Fantasma**: Limitarse estrictamente a los requerimientos especificados en la `spec.md` activa.
 - **Privacidad y Seguridad**: Datos 100% locales; sin telemetría, sin backend y cero secretos o API keys en código.
+- **Exportaciones ZIP**: [003] Estructura plana en la raíz con nombre `presupuestospro-copia-AAAA-MM-DD.zip`, conteniendo `datos.json` íntegro y PDFs `{Número} - {Cliente}.pdf` sanitizados (caracteres prohibidos eliminados, máx. 60 caracteres y sufijos `_${i}` ante colisión).
 
 Las reglas de producto viven en .specify/memory/constitution.md y el estado del producto en specs/README.md
