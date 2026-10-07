@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-03
 
-**Status**: Draft
+**Status**: Publicada
 
 **Input**: User description: "PresupuestoPro v1 — herramienta local para que un freelancer genere presupuestos profesionales en PDF, con su marca, catálogo de servicios, agenda de clientes, cálculo automático de IVA (21 %) y retención de IRPF (15 % / 7 %), numeración PRE-{YYYY}-{NNNN}, vista previa en vivo y tema claro/oscuro. Sin cuentas, sin nube, sin facturación."
 
