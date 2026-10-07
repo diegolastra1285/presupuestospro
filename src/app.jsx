@@ -169,7 +169,7 @@ function reducer(estado, accion) {
 export function App() {
   const [estado, dispatch] = useReducer(reducer, crearEstadoVacio());
   const [cargado, setCargado] = useState(false);
-  const [ruta, setRuta] = useState(window.location.hash || '#/presupuestos');
+  const [ruta, setRuta] = useState(window.location.hash || '#/');
 
   // Inicialización y carga de IndexedDB
   useEffect(() => {
@@ -191,7 +191,7 @@ export function App() {
 
     // Control de rutas por hash
     const onHashChange = () => {
-      setRuta(window.location.hash || '#/presupuestos');
+      setRuta(window.location.hash || '#/');
     };
     window.addEventListener('hashchange', onHashChange);
 
@@ -222,8 +222,8 @@ export function App() {
 
   // Determinar vista activa
   const renderVista = () => {
-    // #/ o ruta vacía -> PaginaInicio (FR-001, US1)
-    if (ruta === '#/' || ruta === '' || ruta === '#') {
+    // #/, #/inicio o ruta vacía -> PaginaInicio (FR-001, US1)
+    if (ruta === '#/' || ruta === '' || ruta === '#' || ruta === '#/inicio') {
       return (
         <PaginaInicio 
           estado={estado} 

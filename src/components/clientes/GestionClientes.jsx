@@ -3,6 +3,7 @@ import { useState } from 'preact/hooks';
 import { validarIdentificadorFiscal } from '../../domain/nif.js';
 import { Modal } from '../comun/Modal.jsx';
 import { Alerta } from '../comun/Alerta.jsx';
+import { ModalFormCliente } from './ModalFormCliente.jsx';
 
 export function GestionClientes({ estado, dispatch }) {
   const clientes = estado.clientes || [];
@@ -180,85 +181,19 @@ export function GestionClientes({ estado, dispatch }) {
         </div>
       </div>
 
-      {/* Modal Nuevo / Editar Cliente */}
-      <Modal
+      {/* Modal Nuevo / Editar Cliente (FR-012, T022) */}
+      <ModalFormCliente
         abierto={modalAbierto}
-        titulo={clienteEditando ? 'Editar cliente' : 'Nuevo cliente en la agenda'}
+        clienteEditando={clienteEditando}
+        onGuardar={(clienteGuardar) => {
+          dispatch({
+            tipo: 'GUARDAR_CLIENTE',
+            payload: clienteGuardar
+          });
+          setModalAbierto(false);
+        }}
         onClose={() => setModalAbierto(false)}
-      >
-        <form onSubmit={handleGuardar} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div class="form-group">
-            <label class="form-label">Nombre o razón social *</label>
-            <input
-              type="text"
-              value={nombre}
-              placeholder="Ej: Acme Digital Corp o Juan Pérez"
-              class={errorNombre ? 'error' : ''}
-              onInput={(e) => {
-                setNombre(e.target.value);
-                if (errorNombre) setErrorNombre('');
-              }}
-              autoFocus
-            />
-            {errorNombre && <span class="form-error">{errorNombre}</span>}
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Tipo de cliente *</label>
-            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-              <option value="empresa">Empresa / Autónomo (con retención de IRPF)</option>
-              <option value="particular">Particular (sin retención de IRPF, forzado a 0 %)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">
-              <span>NIF / CIF / DNI</span>
-              {validacionNif && !validacionNif.valido && (
-                <span class="badge badge-draft" style={{ textTransform: 'none', fontWeight: 'normal' }}>
-                  ⚠️ {validacionNif.motivo}
-                </span>
-              )}
-            </label>
-            <input
-              type="text"
-              value={nif}
-              placeholder="Ej: B98765431 o 12345678Z"
-              onInput={(e) => setNif(e.target.value)}
-            />
-            <span class="form-hint">Aviso no bloqueante si el formato no es válido</span>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Correo electrónico</label>
-            <input
-              type="email"
-              value={email}
-              placeholder="facturacion@cliente.com"
-              onInput={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Dirección fiscal / postal</label>
-            <textarea
-              rows="2"
-              value={direccion}
-              placeholder="Calle, número, código postal y ciudad"
-              onInput={(e) => setDireccion(e.target.value)}
-            />
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-            <button type="button" class="btn btn-secondary" onClick={() => setModalAbierto(false)}>
-              Cancelar
-            </button>
-            <button type="submit" class="btn btn-primary">
-              Guardar cliente
-            </button>
-          </div>
-        </form>
-      </Modal>
+      />
 
       {/* Modal Confirmar Eliminación con Conteo de Borradores */}
       <Modal

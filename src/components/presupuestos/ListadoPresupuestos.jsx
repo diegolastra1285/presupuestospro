@@ -1,7 +1,5 @@
 import { h } from 'preact';
 import { useState, useMemo } from 'preact/hooks';
-import { formatearMoneda } from '../../utils/moneda.js';
-import { formatearFecha, obtenerNombreMes } from '../../utils/fechas.js';
 import { calcularTotalesPresupuesto } from '../../domain/calculos.js';
 import { 
   exportarTodoZip, 
@@ -9,6 +7,10 @@ import {
   obtenerPresupuestosExportables 
 } from '../../services/exportacion-zip.js';
 import { Alerta } from '../comun/Alerta.jsx';
+import { CabeceraAcciones } from './CabeceraAcciones.jsx';
+import { FiltroEstados } from './FiltroEstados.jsx';
+import { TablaPresupuestos } from './TablaPresupuestos.jsx';
+import { obtenerNombreMes } from '../../utils/fechas.js';
 
 export function obtenerEstadoPresupuesto(p) {
   const estado = String(p.estado || '').toLowerCase();
@@ -26,7 +28,7 @@ export function obtenerEstadoPresupuesto(p) {
     return { key: 'rechazado', texto: 'Rechazado', badgeClase: 'badge--rechazado' };
   }
   if (estado === 'anulado') {
-    return { key: 'rechazado', texto: 'ANULADO', badgeClase: 'badge--rechazado' };
+    return { key: 'rechazado', texto: 'Rechazado', badgeClase: 'badge--rechazado' };
   }
   if (estado === 'caducado' || (esCaducado && (estado === 'emitido' || estado === 'enviado'))) {
     return { key: 'caducado', texto: 'Caducado', badgeClase: 'badge--caducado' };
@@ -94,9 +96,9 @@ export function ListadoPresupuestos({ estado, dispatch, navegar }) {
   }
 
   // Filtros
-  const [filtroEstado, setFiltroEstado] = useState('todos'); // 'todos' | 'borrador' | 'enviado' | 'aceptado' | 'rechazado' | 'caducado'
+  const [filtroEstado, setFiltroEstado] = useState('todos');
   const [filtroAnio, setFiltroAnio] = useState(() => String(new Date().getFullYear()));
-  const [filtroMes, setFiltroMes] = useState('todos'); // 'todos' | '1' .. '12'
+  const [filtroMes, setFiltroMes] = useState('todos');
 
   // Años disponibles según los presupuestos registrados
   const aniosDisponibles = useMemo(() => {
@@ -120,9 +122,6 @@ export function ListadoPresupuestos({ estado, dispatch, navegar }) {
         }
       }
 
-      // Para año y mes:
-      // Si está emitido o anulado, usamos p.anio y p.mesEmision (FR-022)
-      // Si es borrador, usamos su fecha de creación
       const anioPresupuesto = p.anio || (p.creadoEn ? new Date(p.creadoEn).getFullYear() : null);
       const mesPresupuesto = p.mesEmision || (p.creadoEn ? (new Date(p.creadoEn).getMonth() + 1) : null);
 
@@ -138,7 +137,7 @@ export function ListadoPresupuestos({ estado, dispatch, navegar }) {
     });
   }, [presupuestos, filtroEstado, filtroAnio, filtroMes]);
 
-  // Texto del recuento (US6.7)
+  // Texto del recuento
   const textoRecuento = useMemo(() => {
     const total = presupuestosFiltrados.length;
     const palabra = total === 1 ? 'presupuesto' : 'presupuestos';
@@ -194,148 +193,34 @@ export function ListadoPresupuestos({ estado, dispatch, navegar }) {
         </div>
       )}
 
-      <div class="view-header">
-        <div>
-          <h2 class="view-title">Historial de Presupuestos</h2>
-          <p class="form-hint">Consulta, edita o emite presupuestos para tus clientes.</p>
-        </div>
-        <div class="header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <button
-            type="button"
-            class={`btn btn-secondary ${estadoExportacion !== 'inactivo' ? 'btn--loading' : ''}`}
-            id="btn-exportar-todo-zip"
-            disabled={sinPresupuestosExportables || estadoExportacion !== 'inactivo'}
-            title={sinPresupuestosExportables ? 'No hay presupuestos emitidos para exportar en PDF' : undefined}
-            aria-label="Exportar todos los presupuestos emitidos y copia de datos en formato ZIP"
-            aria-busy={estadoExportacion !== 'inactivo' ? 'true' : undefined}
-            onClick={handleExportarTodoZip}
-          >
-            {textoBotonExportar}
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            onClick={() => navegar('#/presupuesto/nuevo')}
-          >
-            + Nuevo presupuesto
-          </button>
-        </div>
-      </div>
+      {/* Cabecera de acciones (FR-007, T017) */}
+      <CabeceraAcciones
+        navegar={navegar}
+        onExportarZip={handleExportarTodoZip}
+        deshabilitarExportar={sinPresupuestosExportables || estadoExportacion !== 'inactivo'}
+        textoBotonExportar={textoBotonExportar}
+        estadoExportacion={estadoExportacion}
+      />
 
-      {/* Tarjeta de Filtros y Recuento */}
-      <div class="card">
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div class="form-group" style={{ minWidth: '150px' }}>
-              <label class="form-label" style={{ fontSize: '0.75rem' }}>Estado</label>
-              <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
-                <option value="todos">Todos los estados</option>
-                <option value="borrador">Solo borradores</option>
-                <option value="enviado">Solo enviados</option>
-                <option value="aceptado">Solo aceptados</option>
-                <option value="rechazado">Solo rechazados</option>
-                <option value="caducado">Solo caducados</option>
-              </select>
-            </div>
+      {/* Tarjeta de Filtros (FR-007, T019) */}
+      <FiltroEstados
+        filtroEstado={filtroEstado}
+        setFiltroEstado={setFiltroEstado}
+        filtroAnio={filtroAnio}
+        setFiltroAnio={setFiltroAnio}
+        filtroMes={filtroMes}
+        setFiltroMes={setFiltroMes}
+        aniosDisponibles={aniosDisponibles}
+        textoRecuento={textoRecuento}
+      />
 
-            <div class="form-group" style={{ minWidth: '130px' }}>
-              <label class="form-label" style={{ fontSize: '0.75rem' }}>Año</label>
-              <select value={filtroAnio} onChange={(e) => setFiltroAnio(e.target.value)}>
-                <option value="todos">Todos los años</option>
-                {aniosDisponibles.map(a => (
-                  <option key={a} value={String(a)}>{a}</option>
-                ))}
-              </select>
-            </div>
-
-            <div class="form-group" style={{ minWidth: '150px' }}>
-              <label class="form-label" style={{ fontSize: '0.75rem' }}>Mes de emisión</label>
-              <select value={filtroMes} onChange={(e) => setFiltroMes(e.target.value)}>
-                <option value="todos">Todos los meses</option>
-                {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                  <option key={m} value={String(m)}>{obtenerNombreMes(m)}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Banner de recuento visible (FR-022, US6.7) */}
-          <div style={{ backgroundColor: 'var(--color-surface-subtle)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', fontWeight: '600', fontSize: '0.9rem' }}>
-            📊 {textoRecuento}
-          </div>
-        </div>
-
-        {/* Tabla de presupuestos */}
-        <div class="table-container" style={{ marginTop: '0.5rem' }}>
-          <table class="table">
-            <thead>
-              <tr>
-                <th style={{ width: '18%' }}>Número</th>
-                <th style={{ width: '32%' }}>Cliente</th>
-                <th style={{ width: '15%' }}>Fecha</th>
-                <th style={{ textAlign: 'right', width: '15%' }}>Total</th>
-                <th style={{ textAlign: 'center', width: '10%' }}>Estado</th>
-                <th style={{ textAlign: 'right', width: '10%' }}>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {presupuestosFiltrados.length === 0 ? (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--color-text-muted)' }}>
-                    No se encontraron presupuestos con los filtros seleccionados.
-                  </td>
-                </tr>
-              ) : (
-                presupuestosFiltrados.map((p) => {
-                  const info = obtenerInfoFila(p);
-                  const estadoInfo = obtenerEstadoPresupuesto(p);
-                  const esAnulado = p.estado === 'anulado' || p.estado === 'rechazado';
-                  const esBorrador = estadoInfo.key === 'borrador';
-
-                  return (
-                    <tr
-                      key={p.id}
-                      style={esAnulado ? { opacity: 0.7, backgroundColor: 'var(--pp-surface-subtle)' } : {}}
-                    >
-                      <td style={{ fontWeight: '700', color: esBorrador ? 'var(--pp-badge-borrador-text)' : 'inherit' }}>
-                        {info.numero}
-                        {p.versiones && p.versiones.length > 1 && (
-                          <span style={{ fontSize: '0.8rem', color: 'var(--pp-text-muted)', marginLeft: '0.25rem' }}>
-                            (v{p.versiones.length})
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        <span style={{ fontWeight: '600' }}>{info.clienteNombre}</span>
-                      </td>
-                      <td style={{ fontSize: '0.875rem' }}>
-                        {formatearFecha(info.fecha)}
-                      </td>
-                      <td style={{ textAlign: 'right', fontWeight: '700' }}>
-                        {formatearMoneda(info.totalCentimos)}
-                      </td>
-                      <td style={{ textAlign: 'center' }}>
-                        <span class={`badge ${estadoInfo.badgeClase}`}>{estadoInfo.texto}</span>
-                      </td>
-                      <td>
-                        <div class="table-actions" style={{ justifyContent: 'flex-end' }}>
-                          <button
-                            type="button"
-                            class="btn btn-secondary btn-sm"
-                            onClick={() => navegar(`#/presupuesto/${p.id}`)}
-                          >
-                            {esBorrador ? 'Editar' : 'Ver detalle'}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* Tabla y Tarjetas Responsivas (FR-008, T020) */}
+      <TablaPresupuestos
+        presupuestos={presupuestosFiltrados}
+        obtenerInfoFila={obtenerInfoFila}
+        obtenerEstadoPresupuesto={obtenerEstadoPresupuesto}
+        navegar={navegar}
+      />
     </div>
   );
 }

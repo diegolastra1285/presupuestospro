@@ -4,6 +4,7 @@ import { validarIdentificadorFiscal } from '../../domain/nif.js';
 import { crearDatosSemilla } from '../../domain/estado-inicial.js';
 import { Alerta } from '../comun/Alerta.jsx';
 import { RespaldoDatos } from './RespaldoDatos.jsx';
+import { CargaLogotipo } from './CargaLogotipo.jsx';
 
 export function ConfiguracionPerfil({ estado, dispatch, navegar }) {
   const perfilActual = estado.perfil || {};
@@ -210,46 +211,13 @@ export function ConfiguracionPerfil({ estado, dispatch, navegar }) {
           </div>
         </div>
 
-        {/* Logotipo y Marca */}
-        <div class="card">
-          <h3 class="card-title">Logotipo y Marca</h3>
-          <p class="form-hint">
-            Solo archivos PNG o JPG de tamaño ≤ 1 MB. Si no tienes logotipo, en su lugar se mostrará tu nombre y NIF en texto destacado.
-          </p>
-
-          {avisoLogo && (
-            <Alerta tipo="warning" icono="⚠️">
-              {avisoLogo}
-            </Alerta>
-          )}
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-            {logo ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ padding: '0.5rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', backgroundColor: '#ffffff' }}>
-                  <img src={logo} alt="Logo actual" style={{ maxHeight: '80px', maxWidth: '180px', objectFit: 'contain' }} />
-                </div>
-                <button type="button" class="btn btn-danger btn-sm" onClick={handleEliminarLogo}>
-                  Eliminar logotipo
-                </button>
-              </div>
-            ) : (
-              <div style={{ padding: '1rem', border: '2px dashed var(--color-border)', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-                Sin logotipo (se mostrará nombre y NIF)
-              </div>
-            )}
-
-            <div class="form-group" style={{ flex: 1, minWidth: '220px' }}>
-              <label class="form-label">Subir nuevo logotipo</label>
-              <input
-                type="file"
-                accept="image/png,image/jpeg,image/jpg"
-                onChange={handleLogoUpload}
-                style={{ padding: '0.5rem' }}
-              />
-            </div>
-          </div>
-        </div>
+        {/* Logotipo y Marca (FR-014, T026) */}
+        <CargaLogotipo
+          logo={logo}
+          avisoLogo={avisoLogo}
+          onSubirLogo={handleLogoUpload}
+          onEliminarLogo={handleEliminarLogo}
+        />
 
         {/* Configuración Fiscal y Condiciones por defecto */}
         <div class="card">

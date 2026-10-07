@@ -1,107 +1,152 @@
-# Tasks: Rediseño visual, página de inicio y navegación compartida
+---
+description: "Task list for 002-redisenio-visual-inicio implementation"
+---
 
-**Feature**: `002-redisenio-visual-inicio`
-**Spec**: [spec.md](./spec.md) | **Plan**: [plan.md](./plan.md)
+# Tasks: 002-redisenio-visual-inicio
+
+**Input**: Design documents from `/specs/002-redisenio-visual-inicio/`
+
+**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+
+**Tests**: Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+
+**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+
+## Format: `[ID] [P?] [Story] Description`
+
+- **[P]**: Can run in parallel (different files, no dependencies)
+- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
+- Include exact file paths in descriptions
+
+## Phase 1: Setup (Shared Infrastructure)
+
+**Purpose**: Project initialization and basic structure
+
+- [X] T001 Create project structure per implementation plan in `src/`
+- [X] T002 Initialize Preact + Vite project with dependencies
+- [X] T003 [P] Configure Vitest and linting/formatting tools
 
 ---
 
-## Phase 1: Setup (Infraestructura de presentación)
+## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Inicialización de la estructura de archivos de la capa visual y plantillas
+**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-- [X] T001 Crear el directorio `public/css/` y el archivo base `public/css/estilos.css`
-- [X] T002 [P] Enlazar la hoja de estilos centralizada `public/css/estilos.css` en `index.html` y retirar las importaciones legadas de `src/styles/*.css` en `src/index.jsx` para unificar la fuente de estilos
-- [X] T003 [P] Crear el directorio `src/services/plantillas/` para la plantilla HTML del presupuesto
+**⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
----
+- [X] T004 Define CSS Custom Properties (`--pp-*`) in `src/styles/variables.css` based on data-model.md
+- [X] T005 [P] Implement hash-based routing structure in `src/app.jsx` (`#/`, `#/presupuestos`, `#/clientes`, etc.)
+- [X] T006 [P] Configure SVG inline icon system in `src/components/comun/iconos.jsx`
+- [X] T007 Setup IndexedDB persistence logic in `src/store/db.js`
+- [X] T008 Create base layout shell with shared navigation bar in `src/components/comun/Layout.jsx`
 
-## Phase 2: Foundational (Sistema visual centralizado)
-
-**Purpose**: Definición de variables CSS y tokens del sistema de diseño que bloquean las historias de usuario
-
-- [X] T004 Declarar las variables CSS en `:root` dentro de `public/css/estilos.css` (paleta sobria, escala tipográfica, espaciados estándar, radios y sombras) según `specs/002-redisenio-visual-inicio/contracts/contrato-sistema-visual.md`
-- [X] T005 [P] Definir el reseteo tipográfico, jerarquía de encabezados (`h1`, `h2`, `h3`) y superficies sobrias en `public/css/estilos.css`
-- [X] T006 [P] Definir las clases e insignias semánticas de estado (`.badge--borrador`, `.badge--enviado`, `.badge--aceptado`, `.badge--rechazado`, `.badge--caducado`) en `public/css/estilos.css`
-
-**Checkpoint**: Tokens visuales y componentes base listos en `public/css/estilos.css`.
+**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
 ---
 
-## Phase 3: User Story 1 - Acceso a la página de inicio y navegación compartida (Priority: P1) 🎯 MVP
+## Phase 3: User Story 1 - Inicio (Dashboard) y Navegación Compartida Persistente (Priority: P1) 🎯 MVP
 
-**Goal**: Permitir el acceso directo a la página de inicio al entrar a la raíz del servidor (`#/` o `/`) y proporcionar una barra de navegación compartida permanente entre todas las secciones.
+**Goal**: Dashboard with metrics, quick actions, and recent budgets, plus persistent navigation.
 
-**Independent Test**: Acceder a `http://localhost:5173/` y verificar que carga la nueva página de inicio con enlaces directos, y que la barra superior y móvil permite navegar entre Inicio, Presupuestos, Clientes, Catálogo y Perfil sin usar el botón «Atrás» del navegador.
+**Independent Test**: Load `#/` to see dashboard with metrics and recent items; click navigation links without page reload.
 
 ### Implementation for User Story 1
 
-- [X] T007 [US1] Crear el componente de la página de inicio en `src/components/inicio/PaginaInicio.jsx` con contenedor principal, título de bienvenida y accesos rápidos a las cuatro secciones
-- [X] T008 [US1] Actualizar el componente `Header` en `src/components/comun/Header.jsx` para incluir permanentemente el enlace a «Inicio» (`#/`) junto a Presupuestos, Clientes, Catálogo y Perfil, con indicador visual de ruta activa
-- [X] T009 [US1] Actualizar el componente `MobileNavBar` en `src/components/comun/Header.jsx` para incluir el botón de Inicio y mantener navegación persistente de 5 secciones en pantallas móviles
-- [X] T010 [US1] Configurar el enrutador en `src/app.jsx` para que la ruta por defecto (`#/`, `#` o vacía) se normalice y renderice `PaginaInicio` pasando `estado`, `dispatch` y `navegar`
+- [X] T009 [P] [US1] Create `ResumenMetricas` component in `src/components/inicio/ResumenMetricas.jsx`
+- [X] T010 [P] [US1] Create `AccesosRapidos` component in `src/components/inicio/AccesosRapidos.jsx` (ensuring 44x44px touch targets)
+- [X] T011 [P] [US1] Create `ListadoRecientes` component in `src/components/inicio/ListadoRecientes.jsx`
+- [X] T012 [US1] Assemble `Inicio` view in `src/pages/Inicio.jsx` using the new components
 
-**Checkpoint**: User Story 1 completa y verificable como MVP independiente.
+**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
 ---
 
-## Phase 4: User Story 2 - Resumen de actividad de presupuestos en la página de inicio (Priority: P2)
+## Phase 4: User Story 2 - Editor de Presupuestos en Dos Columnas con Visor PDF en Tiempo Real (Priority: P1)
 
-**Goal**: Mostrar en la página de inicio un resumen cuantitativo del estado de presupuestos (total y desglose en Borrador, Enviado, Aceptado, Rechazado, Caducado) con accesos rápidos.
+**Goal**: Split-screen budget editor with live PDF preview for desktop, tabbed for mobile.
 
-**Independent Test**: Abrir la página de inicio con presupuestos existentes y verificar que los contadores coinciden con los registros reales, o con cero registros mostrando una llamada a la acción para crear el primer presupuesto.
+**Independent Test**: Navigate to `#/presupuestos/nuevo` on desktop to see the two-column layout; modifying form updates PDF instantly.
 
 ### Implementation for User Story 2
 
-- [X] T011 [US2] Implementar la función de cálculo en memoria del resumen de actividad (`ResumenActividad`) en `src/components/inicio/PaginaInicio.jsx` evaluando el array `estado.presupuestos`
-- [X] T012 [US2] Construir la rejilla de tarjetas métricas (`.metric-card`) en `src/components/inicio/PaginaInicio.jsx` con el recuento total y el desglose de los 5 estados acompañados de sus badges
-- [X] T013 [US2] Implementar el estado vacío para cuando no existan presupuestos (`total === 0`) con mensaje informativo y botón de «Crear primer presupuesto» en `src/components/inicio/PaginaInicio.jsx`
-- [X] T014 [US2] Conectar los eventos de clic en las tarjetas de estado y en el botón de acción rápida para navegar a `#/presupuestos` o `#/presupuesto/nuevo` en `src/components/inicio/PaginaInicio.jsx`
+- [X] T013 [P] [US2] Implement `FormularioDatos`, `LineasArticulos`, `DesgloseFiscal` in `src/components/presupuestos/`
+- [X] T014 [P] [US2] Implement `VisorPdfLive` component in `src/components/presupuestos/VisorPdfLive.jsx`
+- [X] T015 [US2] Create responsive two-column layout in `src/pages/EditorPresupuesto.jsx`
+- [X] T016 [US2] Wire state updates between form fields and live PDF preview using `pdfmake` logic
 
-**Checkpoint**: Página de inicio con resumen dinámico de presupuestos totalmente operativa.
+**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
 ---
 
-## Phase 5: User Story 3 - Rediseño visual profesional, sobrio y estados distinguibles (Priority: P3)
+## Phase 5: User Story 3 - Listado de Presupuestos Optimizado con Acciones Rápidas y Exportación (Priority: P2)
 
-**Goal**: Rediseñar la apariencia de toda la aplicación para proyectar una imagen sobria y profesional con jerarquía clara y estados distinguibles.
+**Goal**: Enhanced budget list with state filters, ZIP export, and mobile cards.
 
-**Independent Test**: Recorrer las pantallas de presupuestos, clientes, catálogo y perfil comprobando espaciados uniformes, contrastes WCAG AA, estilos de tabla y visualización inequívoca de los 5 estados de presupuesto.
+**Independent Test**: Navigate to `#/presupuestos`, filter by status, export ZIP, and resize window to see cards.
 
 ### Implementation for User Story 3
 
-- [X] T015 [US3] Añadir estilos sobrios para tablas, tarjetas, formularios y cajas de totales (`.metric-card`, `.nav-link--active`, `.totals-box`) en `public/css/estilos.css`
-- [X] T016 [US3] Actualizar `src/components/presupuestos/ListadoPresupuestos.jsx` para integrar las nuevas clases de badges de estado sobrios y encabezados consistentes
-- [X] T017 [US3] Actualizar `src/components/presupuestos/DetallePresupuesto.jsx` y `src/components/presupuestos/VistaPrevia.jsx` para utilizar las nuevas insignias de estado y la caja de totales rediseñada
-- [X] T018 [P] [US3] Aplicar las clases y espaciados de `public/css/estilos.css` en `src/components/clientes/GestionClientes.jsx` y `src/components/catalogo/GestionCatalogo.jsx`
-- [X] T019 [P] [US3] Ajustar la apariencia y márgenes de los formularios en `src/components/perfil/ConfiguracionPerfil.jsx` para armonizar con el sistema visual sobrio
+- [X] T017 [P] [US3] Create `CabeceraAcciones` with export button in `src/components/presupuestos/CabeceraAcciones.jsx`
+- [X] T018 [P] [US3] Create semantic state badges in `src/components/comun/BadgeEstado.jsx`
+- [X] T019 [P] [US3] Implement `FiltroEstados` component in `src/components/presupuestos/FiltroEstados.jsx`
+- [X] T020 [US3] Create `TablaPresupuestos` component (responsive cards) in `src/components/presupuestos/TablaPresupuestos.jsx`
+- [X] T021 [US3] Assemble budgets list view in `src/pages/Presupuestos.jsx`
 
-**Checkpoint**: Todas las vistas de la aplicación reflejan la nueva identidad visual sobria.
+**Checkpoint**: All user stories up to 3 should now be independently functional
 
 ---
 
-## Phase 6: User Story 4 - Documento PDF con estética profesional coherente (Priority: P4)
+## Phase 6: User Story 4 - Gestión Ágil de Clientes, Catálogo de Servicios y Perfil Profesional (Priority: P2)
 
-**Goal**: Aplicar la misma estética sobria y profesional a la plantilla del presupuesto en PDF que recibe el cliente final.
+**Goal**: Dedicated, clean screens for managing clients, catalog, and professional profile.
 
-**Independent Test**: Descargar un presupuesto en PDF y comprobar visualmente que la maquetación es limpia, con azul marino sobrio, bordes finos, tablas alineadas y totales destacados, pasando todas las pruebas de contrato de PDF.
+**Independent Test**: Validate Spanish fiscal IDs in `#/clientes`, edit services in `#/catalogo`, upload logo in `#/perfil`.
 
 ### Implementation for User Story 4
 
-- [X] T020 [US4] Crear la plantilla HTML de referencia de diseño en `src/services/plantillas/presupuesto.html` con estructura limpia de emisor, cliente, tabla de líneas y totales destacados según `specs/002-redisenio-visual-inicio/contracts/contrato-plantilla-pdf.md`
-- [X] T021 [US4] Actualizar la definición del generador en `src/pdf/generador.js` para aplicar la paleta sobria (azul corporativo `#1e3a8a`, bordes `#cbd5e1`, jerarquía de totales) manteniendo el fondo blanco
-- [X] T022 [US4] Ejecutar y validar que los tests de contrato en `tests/contract/pdf-definicion.test.js` pasen al 100% sin regresiones de formato ni estructura
-
-**Checkpoint**: El documento PDF proyecta la misma imagen profesional que la web.
+- [X] T022 [P] [US4] Implement `ModalFormCliente` with NIF/CIF/NIE validation in `src/components/clientes/ModalFormCliente.jsx`
+- [X] T023 [US4] Assemble Clients view in `src/pages/Clientes.jsx`
+- [X] T024 [P] [US4] Implement `FormServicio` and `ListaServicios` in `src/components/catalogo/`
+- [X] T025 [US4] Assemble Catalog view in `src/pages/Catalogo.jsx`
+- [X] T026 [P] [US4] Implement `CargaLogotipo` with instant preview in `src/components/perfil/CargaLogotipo.jsx`
+- [X] T027 [US4] Assemble Profile view in `src/pages/Perfil.jsx`
 
 ---
 
-## Phase 7: Polish & Cross-Cutting Concerns
+## Phase 7: User Story 5 - Sistema de Diseño Sobrio, Tokens Centralizados e Iconografía Ligera (Priority: P3)
 
-**Purpose**: Ajustes finales de responsividad mobile-first, pruebas de no regresión y validación interactiva
+**Goal**: Fully strict design system adoption, enforcing tokens and vector icons without external dependencies.
 
-- [X] T023 [P] Ajustar las reglas de diseño responsivo en `public/css/estilos.css` para anchos de 320 px a 375 px, garantizando que la navegación móvil no oculte controles ni la barra de totales
-- [X] T024 [P] Ejecutar la suite completa de pruebas unitarias y de contratos (`npm test -- --run`) confirmando cero regresiones
-- [X] T025 Ejecutar la validación funcional interactiva completa siguiendo los 4 escenarios de `specs/002-redisenio-visual-inicio/quickstart.md`
+**Independent Test**: Verify all colors/spacing use variables; no external CDN calls in network tab; touch targets >= 44px.
+
+### Implementation for User Story 5
+
+- [X] T028 [US5] Audit all interactive elements across `src/components/` to ensure `--pp-touch-size` >= 44px
+- [X] T029 [US5] Verify all colors and typography use `--pp-*` variables in `src/styles/`
+- [X] T030 [US5] Remove any external CSS or icon dependencies from `index.html` and components
+
+---
+
+## Phase 8: User Story 6 - Plantilla de Documento PDF Profesional y Coherente (Priority: P3)
+
+**Goal**: The PDF output matches the web application's sober visual identity.
+
+**Independent Test**: Generate PDF and check logo placement, semantic colors, margin consistency, and € alignments.
+
+### Implementation for User Story 6
+
+- [X] T031 [US6] Refactor `src/pdf/generador.js` to match the web app visual identity
+- [X] T032 [US6] Ensure amounts in PDF align right, with the € symbol and decimal formatting
+- [X] T033 [US6] Apply semantic colors and spacing tokens to the PDF document layout
+
+---
+
+## Phase N: Polish & Cross-Cutting Concerns
+
+**Purpose**: Improvements that affect multiple user stories
+
+- [X] T034 [P] Run quickstart.md scenarios manually to validate end-to-end functionality
+- [X] T035 [P] Audit IndexedDB persistence and business logic to guarantee no regressions
 
 ---
 
@@ -109,37 +154,9 @@
 
 ### Phase Dependencies
 
-- **Setup (Phase 1)**: Sin dependencias, inicio inmediato.
-- **Foundational (Phase 2)**: Depende de Phase 1. Bloquea la implementación de las historias de usuario.
-- **User Story 1 (Phase 3)**: Depende de Phase 2. MVP inicial.
-- **User Story 2 (Phase 4)**: Depende de US1 (monta sobre `PaginaInicio.jsx`).
-- **User Story 3 (Phase 5)**: Depende de Phase 2; puede desarrollarse en paralelo con US2 o a continuación.
-- **User Story 4 (Phase 6)**: Depende de Phase 2; independiente de la UI web (enfoque en PDF).
-- **Polish (Phase 7)**: Depende de la finalización de todas las historias de usuario.
-
-### Parallel Opportunities
-
-- T002 y T003 pueden ejecutarse en paralelo con T001.
-- T005 y T006 pueden desarrollarse en paralelo una vez iniciado T004.
-- T018 y T019 (Clientes, Catálogo y Perfil) pueden ejecutarse en paralelo.
-- T020 (Plantilla HTML) y T021 (Generador PDF) pueden prepararse de forma desacoplada de la UI web.
-- T023 y T024 en la fase de Polish pueden correr en paralelo.
-
----
-
-## Implementation Strategy
-
-### MVP First (User Story 1 Only)
-
-1. Completar Setup (T001-T003) y Foundational (T004-T006).
-2. Implementar User Story 1 (T007-T010).
-3. Validar de forma independiente: comprobar que entrar en `/` muestra la página de inicio y que la navegación compartida permite moverse entre secciones.
-
-### Incremental Delivery
-
-1. Foundation: Sistema visual en `public/css/estilos.css`.
-2. Incremento 1 (MVP): Página de inicio y navegación permanente (US1).
-3. Incremento 2: Resumen dinámico de presupuestos por estado (US2).
-4. Incremento 3: Rediseño visual global de tablas, formularios y badges (US3).
-5. Incremento 4: Plantilla PDF sobria y profesional (US4).
-6. Verificación final y cierre: Polish y suite de tests (Phase 7).
+- **Setup (Phase 1)**: No dependencies - can start immediately
+- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
+- **User Stories (Phase 3+)**: All depend on Foundational phase completion
+  - User stories can then proceed in parallel (if staffed)
+  - Or sequentially in priority order (P1 → P2 → P3)
+- **Polish (Final Phase)**: Depends on all desired user stories being complete
