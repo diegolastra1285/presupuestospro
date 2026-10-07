@@ -24,5 +24,6 @@ PresupuestoPro es una Single Page Application (SPA/PWA) local y sin backend para
 - **Cero Alcance Fantasma**: Limitarse estrictamente a los requerimientos especificados en la `spec.md` activa.
 - **Privacidad y Seguridad**: Datos 100% locales; sin telemetría, sin backend y cero secretos o API keys en código.
 - **Exportaciones ZIP**: [003] Estructura plana en la raíz con nombre `presupuestospro-copia-AAAA-MM-DD.zip`, conteniendo `datos.json` íntegro y PDFs `{Número} - {Cliente}.pdf` sanitizados (caracteres prohibidos eliminados, máx. 60 caracteres y sufijos `_${i}` ante colisión).
+- Cuando te pida "cerrar la feature", ejecuta: verificar working tree limpio y commitear pendientes, correr test (parar si fallan), checjout master, merge --no-ff de la rama de la feature con mensaje "Merge feature NNN": <nombre>", borrar la rama local, y mostrar git log --online --graph -10. 
 
 Las reglas de producto viven en .specify/memory/constitution.md y el estado del producto en specs/README.md
