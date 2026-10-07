@@ -150,3 +150,6 @@ tests/
    - Ejecutar suite completa con `npm test` y verificar todos los escenarios de `quickstart.md`.
 6. **Mantenimiento y Documentación de Proyecto (Paso Final)**:
    - Actualizar `CLAUDE.md` con las decisiones de diseño y convenciones nuevas de esta feature, una línea por decisión, con referencia a la spec (p. ej. `[003] ...`). No incluir entradas por incluir; asegurar siempre que sea información transversal y relevante para el proyecto que puedan aprovechar futuras features.
+
+## Spec-kit
+- Al ejecutar `/speckit.plan`, SIEMPRE incluye en `plan.md`, como último paso de la fase final, un paso de mantenimiento: “Actualizar `AGENTS.md` con las decisiones de diseño y convenciones nuevas de esta feature, una línea por decisión, con referencia a la spec (p. ej. ‘[003] ...’). No incluyas entradas por incluir, asegúrate siempre de que es información transversal y relevante para el proyecto que pueden aprovechar futuras features.”   
